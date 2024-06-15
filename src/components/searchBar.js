@@ -30,12 +30,13 @@ const searchResults = [
   }
 ];
 
-const SearchPanel = () => {
+const SearchPanel = (isLoading,listofPOI,onSearch) => {
   const [searchText, setSearchText] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [likedItems, setLikedItems] = useState([]);
   const handleButtonClick = () => {
     setShowResults(true);
+    onSearch();
   };
 
   const handleChange = (e) => {
