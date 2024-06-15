@@ -5,7 +5,11 @@ import SearchPanel from './searchBar';
 
 const POIMap = () => {
     
-  
+  const addresses = [
+    "1600 Amphitheatre Parkway, Mountain View, CA",
+    "One Apple Park Way, Cupertino, CA",
+    "1 Infinite Loop, Cupertino, CA"
+  ];
   const [showResults, setShowResults] = useState(false);
 
   const handleButtonClick = () => {
@@ -14,7 +18,7 @@ const POIMap = () => {
     return (
       <div style={{ height: '100vh', position: 'relative' }}>
       <SearchPanel />
-      <MapContainer />
+      <MapContainer addresses={addresses} />
     </div>
     );
   
