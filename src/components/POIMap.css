@@ -1,0 +1,32 @@
+body, html, #root {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #001529;
+    padding: 0 20px;
+  }
+  
+  .header .logo {
+    color: #fff;
+    font-size: 1.5rem;
+  }
+  
+  .site-layout-background {
+    background: #fff;
+  }
+  
+  .search-container {
+    display: flex;
+    padding: 16px;
+  }
+  
+  .search-container > * {
+    margin-right: 8px;
+  }
+  
