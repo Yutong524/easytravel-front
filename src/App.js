@@ -1,11 +1,12 @@
 import React from 'react';
-import MapComponent from './components/POIMap';
-
+import POIMap from './components/POIMap';
+import Map from './components/Map'
 function App() {
+
   return (
     <div className="App">
       
-      <MapComponent />
+      <POIMap />
     </div>
   );
 }
