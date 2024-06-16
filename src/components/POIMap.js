@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import SearchResults from './SearchResults';
 import MapContainer from './mapContainer';
 import SearchPanel from './searchBar';
 
