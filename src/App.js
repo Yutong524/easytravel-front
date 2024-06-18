@@ -1,4 +1,5 @@
 import React from 'react';
+import Home from './components/home/Home';
 import POIMap from './components/POIMap';
 import Map from './components/Map'
 function App() {
@@ -6,7 +7,7 @@ function App() {
   return (
     <div className="App">
       
-      <POIMap />
+      <Home />
     </div>
   );
 }
