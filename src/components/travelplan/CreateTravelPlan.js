@@ -24,14 +24,21 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
 
   const onFinish = (values) => {
     if (values.planName.trim()) {
-      const payload = {
-        name: values.planName,
-        description: values.description,
-        tags: tags,
-        author: userId
-      };
+      // const payload = {
+      //   name: values.planName,
+      //   description: values.description,
+      //   tags: tags,
+      //   author: userId
+      // };
+      const tagsString = tags.join(',');
+      const payload = `${values.planName};${values.description};001;${tagsString}`;   // dummy id = 001
+      // const payload = `${values.planName};${values.description};${userId}`;
 
-      axios.post('/travelPlans', payload)
+      axios.post('/travelPlans', payload, {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      })
         .then(response => {
           if (response.status === 201) {
             message.success('Plan created successfully!');
@@ -75,7 +82,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
   return (
     <Modal
       title="Create New Plan"
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       className="create-travel-plan-modal"
       footer={null}
