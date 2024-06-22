@@ -31,7 +31,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
       //   author: userId
       // };
       const tagsString = tags.join(',');
-      const payload = `${values.planName};${values.description};001;${tagsString}`;   // dummy id = 001
+      const payload = `${values.planName};${values.description};1;${tagsString}`;   // dummy id = 1
       // const payload = `${values.planName};${values.description};${userId}`;
 
       axios.post('/travelPlans', payload, {
