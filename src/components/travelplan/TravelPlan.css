@@ -1,11 +1,13 @@
 .travel-plan-container {
-    display: flex; 
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center; 
     min-height: 100vh; 
     padding: 24px;
+    width: 100%;
   }
+
+.create-plan-container {
+  width: 100%;
+  height: 70px;
+}
   
   .create-plan-button {
     position: absolute;
@@ -16,10 +18,9 @@
   .plan-list {
     margin-bottom: 24px;
   }
-  
-  .plan-item {
-    padding: 12px;
-    border-bottom: 1px solid #e8e8e8;
+
+  .plan-detail-container {
+    
   }
   
   .no-plan-message {
