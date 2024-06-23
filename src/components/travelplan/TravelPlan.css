@@ -1,0 +1,27 @@
+.travel-plan-container {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh; 
+    padding: 24px;
+  }
+  
+  .create-plan-button {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+  }
+  
+  .plan-list {
+    margin-bottom: 24px;
+  }
+  
+  .plan-item {
+    padding: 12px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  
+  .no-plan-message {
+    margin-top: 24px;
+  }
