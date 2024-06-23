@@ -13,20 +13,21 @@ class Login extends React.Component {
     this.setState({
       loading: true,
     });
-    axios.get('http://localhost:8080/api/customers/', data)
-      .then(response => {
-        message.success(`Login Successful`);
-        this.setState({
-          loading: false,
-        });
+    axios.post('http://localhost:8080/api/customers/login', data)
+    .then(response => {
+        localStorage.setItem('customer', JSON.stringify(response.data));
+        message.success('Login Successful');
         this.props.onSuccess(); 
-      })
-      .catch(error => {
-        message.error(`Login Failed: ${error.response ? error.response.data.message : error.message}`);
-        this.setState({
-          loading: false,
-        });
+      this.setState({
+        loading: false,
       });
+    })
+    .catch(error => {
+      message.error(`Login Failed: ${error.response ? error.response.data.message : error.message}`);
+      this.setState({
+        loading: false,
+      });
+    });
   };
 
   onReset = () => {

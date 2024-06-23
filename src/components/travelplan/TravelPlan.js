@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, List, Empty, message } from 'antd';
+import { Button, List, Empty, message, Card, Tag } from 'antd';
 import './TravelPlan.css';
+import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 
 function TravelPlan({ userId }) {
+
+
+
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
 
@@ -20,22 +24,43 @@ function TravelPlan({ userId }) {
     handleCloseCreatePlanModal();
   };
 
-  useEffect(() => {
-    if (!userId) return;
 
-    fetch(`/api/travel-plans/${userId}`)
-      .then(response => response.json())
-      .then(data => setTravelPlans(data))
+  const fetchTravelPlans = () => {
+    //if (!userId) return;
+
+    axios.get(`http://localhost:8080/api/travelPlans/1`)
+      .then(response => {
+        setTravelPlans(response.data);
+      })
       .catch(error => {
         message.error('Failed to fetch travel plans.');
         console.error(error);
       });
+  };
+  
+  useEffect(() => {
+    fetchTravelPlans();
   }, [userId]);
+
 
   const renderItem = (plan) => {
     return (
       <List.Item className="plan-item">
-        <h4>{plan.name}</h4>
+        <Card bordered={true} style={{ width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <h4>{plan.name}</h4>
+              <p>{plan.description}</p>
+              {plan.tags && plan.tags.map(tag => (
+                <Tag color="black" key={tag}>{tag}</Tag>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span>This plan has {plan.routesCount} route{plan.routesCount !== 1 ? 's' : ''}. <a href={`/routes/${plan.id}`}>See All Route &gt;</a></span>
+              <Button type="primary" style={{ marginTop: '8px' }}>history</Button>
+            </div>
+          </div>
+        </Card>
       </List.Item>
     );
   };
@@ -63,5 +88,6 @@ function TravelPlan({ userId }) {
     </div>
   );
 }
+
 
 export default TravelPlan;
