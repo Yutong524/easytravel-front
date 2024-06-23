@@ -34,7 +34,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
       const payload = `${values.planName};${values.description};1;${tagsString}`;   // dummy id = 1
       // const payload = `${values.planName};${values.description};${userId}`;
 
-      axios.post('/travelPlans', payload, {
+      axios.post('http://localhost:8080/api/travelPlans/', payload, {
         headers: {
           'Content-Type': 'text/plain'
         }
