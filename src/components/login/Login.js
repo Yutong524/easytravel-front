@@ -13,7 +13,7 @@ class Login extends React.Component {
     this.setState({
       loading: true,
     });
-    axios.post('http://localhost:8080/api/customers/', data)
+    axios.get('http://localhost:8080/api/customers/', data)
       .then(response => {
         message.success(`Login Successful`);
         this.setState({
