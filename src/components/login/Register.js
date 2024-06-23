@@ -13,7 +13,7 @@ class Register extends React.Component {
     this.setState({
       loading: true,
     });
-    axios.post('/api/register', data)
+    axios.post('http://localhost:8080/api/customers/', data)
       .then(response => {
         message.success(`Registration Successful`);
         this.setState({
