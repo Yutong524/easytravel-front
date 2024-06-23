@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Button, List, Empty } from 'antd';
 import './TravelPlan.css';
 import CreateTravelPlan from './CreateTravelPlan';
+import TravelPlanDetails from './TravelPlanDetail';
 
 function TravelPlan({ userId }) {
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
-  const [showRoutes, setShowRoutes] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   const handleCreatePlanClick = () => {
     setCreatePlanModalVisible(true);
@@ -52,21 +54,22 @@ function TravelPlan({ userId }) {
     setTravelPlans(plans);
   }, [userId]);
 
-  const viewRoutes = (routes) => {
-    if (routes.length === 0) {
+  const viewPlanDetail = (plan) => {
+    if (plan.routes.length === 0) {
       return <div>This plan has 0 route. See All Route</div>
     } else{
-      return <button onClick={toggleView}>Edit</button>
+      return <button onClick={() => viewRoutes(plan)}>Edit</button>
     }
   }
 
-  const toggleView = () => {
-    setShowRoutes(true)
+  const viewRoutes = (plan) => {
+    setShowDetails(true);
+    setSelectedPlan(plan);
   };
 
   const renderItem = (plan) => {
     return (
-      <List.Item className="plan-item" extra={viewRoutes(plan.routes)}>
+      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
         <List.Item.Meta
           title={plan.name}
           description={plan.description}
@@ -79,33 +82,33 @@ function TravelPlan({ userId }) {
   };
 
   return (
-    showRoutes ? (<>Routes</>) :
-    <div className="travel-plan-container">
-      <div className="create-plan-container">
-        <Button type="primary" className="create-plan-button" onClick={handleCreatePlanClick}>
-          Create New Plan
-        </Button>
-        <CreateTravelPlan
-          visible={createPlanModalVisible}
-          onClose={handleCloseCreatePlanModal}
-          onCreate={handleCreatePlan}
-          userId={userId}
-        />
-      </div>
-      <div className="travel-plan-list-container">
-        {travelPlans.length > 0 ? (
-          <List
-            className="plan-list"
-            dataSource={travelPlans}
-            renderItem={renderItem}
-            itemLayout="vertical"
-            bordered
+    showDetails ? (<TravelPlanDetails plan={selectedPlan} setShowDetails={setShowDetails}/>) :
+      <div className="travel-plan-container">
+        <div className="create-plan-container">
+          <Button type="primary" className="create-plan-button" onClick={handleCreatePlanClick}>
+            Create New Plan
+          </Button>
+          <CreateTravelPlan
+            visible={createPlanModalVisible}
+            onClose={handleCloseCreatePlanModal}
+            onCreate={handleCreatePlan}
+            userId={userId}
           />
-        ) : (
-          <Empty description="You don't have any plan yet!" className="no-plan-message" />
-        )}
+        </div>
+        <div className="travel-plan-list-container">
+          {travelPlans.length > 0 ? (
+            <List
+              className="plan-list"
+              dataSource={travelPlans}
+              renderItem={renderItem}
+              itemLayout="vertical"
+              bordered
+            />
+          ) : (
+            <Empty description="You don't have any plan yet!" className="no-plan-message" />
+          )}
+        </div>
       </div>
-    </div>
   );
 }
 
