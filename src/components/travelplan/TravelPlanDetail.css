@@ -1,0 +1,24 @@
+.travel-plan-detail {
+    min-height: 100vh; 
+    padding: 24px;
+    width: 100%;
+}
+
+.page-navs-container {
+    width: 100%;
+    height: 70px;
+}
+
+.create-route-button {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+}
+
+.nav-back-button {
+    position: absolute;
+    top: 24px;
+    left: 20%;
+}
+
+

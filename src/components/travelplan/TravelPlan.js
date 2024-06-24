@@ -63,8 +63,8 @@ function TravelPlan({ userId }) {
   }
 
   const viewRoutes = (plan) => {
-    setShowDetails(true);
     setSelectedPlan(plan);
+    setShowDetails(true);
   };
 
   const renderItem = (plan) => {
