@@ -3,7 +3,7 @@ import Login from './components/login/Login';
 import Register from './components/login/Register';
 import Home from './components/home/Home';
 import POIMap from './components/POIMap';
-import Map from './components/Map';
+
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -23,7 +23,8 @@ function App() {
 
   return (
     <div className="App">
-      {renderPage()}
+    {renderPage()}
+    {/* <POIMap/> */}
     </div>
   );
 }
