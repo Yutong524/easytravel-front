@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, List, Empty } from 'antd';
+import { Button, List, Empty, message, Card, Tag } from 'antd';
 import './TravelPlan.css';
+import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 import TravelPlanDetails from './TravelPlanDetail';
 
 function TravelPlan({ userId }) {
+  userId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -23,16 +25,36 @@ function TravelPlan({ userId }) {
     handleCloseCreatePlanModal();
   };
 
-  useEffect(() => {
-    if (!userId) return;
+  const viewPlanDetail = (plan) => {
+    if (plan.routes.length === 0) {
+      return <div>This plan has 0 route. See All Route</div>
+    } else{
+      return <button onClick={() => viewRoutes(plan)}>Edit</button>
+    }
+  }
 
-    // fetch(`/api/travel-plans/${userId}`)
-    //   .then(response => response.json())
-    //   .then(data => setTravelPlans(data))
-    //   .catch(error => {
-    //     message.error('Failed to fetch travel plans.');
-    //     console.error(error);
-    //   });
+  const viewRoutes = (plan) => {
+    setSelectedPlan(plan);
+    setShowDetails(true);
+  };
+
+  const tempRenderItem = (plan) => {
+    return (
+      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
+        <List.Item.Meta
+          title={plan.name}
+          description={plan.description}
+        />
+        <div className="plan-detail-container">
+          <button>History</button>
+        </div>
+      </List.Item>
+    );
+  };
+
+  const fetchTravelPlans = () => {
+    //if (!userId) return;
+
     const plans = [
       {
         "id": 1,
@@ -51,32 +73,41 @@ function TravelPlan({ userId }) {
         "routes": ["Hollywood"]
       }
     ];
-    setTravelPlans(plans);
+
+    axios.get(`http://localhost:8080/api/travelPlans/1`)
+      .then(response => {
+        setTravelPlans(response.data);
+      })
+      .catch(error => {
+        message.error('Failed to fetch travel plans.');
+        console.error(error);
+      });
+    
+      setTravelPlans([...travelPlans, plans])
+  };
+  
+  useEffect(() => {
+    fetchTravelPlans();
   }, [userId]);
 
-  const viewPlanDetail = (plan) => {
-    if (plan.routes.length === 0) {
-      return <div>This plan has 0 route. See All Route</div>
-    } else{
-      return <button onClick={() => viewRoutes(plan)}>Edit</button>
-    }
-  }
-
-  const viewRoutes = (plan) => {
-    setSelectedPlan(plan);
-    setShowDetails(true);
-  };
 
   const renderItem = (plan) => {
     return (
-      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
-        <List.Item.Meta
-          title={plan.name}
-          description={plan.description}
-        />
-        <div className="plan-detail-container">
-          <button>History</button>
-        </div>
+      <List.Item className="plan-item">
+        <Card bordered={true} style={{ width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <h4>{plan.name}</h4>
+              <p>{plan.description}</p>
+              {plan.tags && plan.tags.map(tag => (
+                <Tag color="black" key={tag}>{tag}</Tag>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <a href={`/routes/${plan.id}`}>See All Route &gt;</a>
+            </div>
+          </div>
+        </Card>
       </List.Item>
     );
   };
@@ -111,5 +142,6 @@ function TravelPlan({ userId }) {
       </div>
   );
 }
+
 
 export default TravelPlan;
