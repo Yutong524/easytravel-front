@@ -11,28 +11,22 @@ const POIMap = () => {
   const [isLoading, setIsLoading] = useState(false); 
   const [pois, setPois] = useState([]); 
 
-  
   const fetchPOIs = () => {
-   
     setIsLoading(true);
-
-   
     setTimeout(() => {
       const fakePOI = JSON.parse(fakePOIJson); 
-      
       setPois(fakePOI);
       addresses = fakePOI.map(poi => poi.address);
-      
       setIsLoading(false);
     }, 1000);
   };
 
- 
   const handleButtonClick = () => {
     fetchPOIs();
   };
-  const handleFavorite=(likedItems)=>{
-    //fake backend
+
+  const handleFavorite = (likedItems) => {
+    // Fake backend
     fetch('/api/favorites', {
       method: 'POST',
       headers: {
@@ -48,11 +42,36 @@ const POIMap = () => {
         console.error('Error:', error);
       });
   };
+
+  const handlePostComment = (poiId, comment) => {
+    // Fake backend
+    fetch(`/api/pois/${poiId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(comment),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Comment posted successfully:', data);
+     
+        setPois(pois.map(poi => poi._id.$oid === poiId ? { ...poi, comments: [...poi.comments, comment] } : poi));
+      })
+      .catch((error) => {
+        console.error('Error posting comment:', error);
+      });
+  };
+
   return (
     <div style={{ height: '100vh', position: 'relative' }}>
-     
-      <SearchPanel isLoading={isLoading} listofPOI={pois} onSearch={handleButtonClick} onFavorite={handleFavorite}/>
-    
+      <SearchPanel
+        isLoading={isLoading}
+        listofPOI={pois}
+        onSearch={handleButtonClick}
+        onFavorite={handleFavorite}
+        onPostComment={handlePostComment} // Pass the function to SearchPanel
+      />
       <MapContainer addresses={addresses} />
     </div>
   );
