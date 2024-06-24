@@ -3,11 +3,14 @@ import { Button, List, Empty, message, Card, Tag } from 'antd';
 import './TravelPlan.css';
 import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
+import TravelPlanDetails from './TravelPlanDetail';
 
 function TravelPlan({ userId }) {
   userId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   const handleCreatePlanClick = () => {
     setCreatePlanModalVisible(true);
@@ -22,9 +25,54 @@ function TravelPlan({ userId }) {
     handleCloseCreatePlanModal();
   };
 
+  const viewPlanDetail = (plan) => {
+    if (plan.routes.length === 0) {
+      return <div>This plan has 0 route. See All Route</div>
+    } else{
+      return <button onClick={() => viewRoutes(plan)}>Edit</button>
+    }
+  }
+
+  const viewRoutes = (plan) => {
+    setSelectedPlan(plan);
+    setShowDetails(true);
+  };
+
+  const tempRenderItem = (plan) => {
+    return (
+      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
+        <List.Item.Meta
+          title={plan.name}
+          description={plan.description}
+        />
+        <div className="plan-detail-container">
+          <button>History</button>
+        </div>
+      </List.Item>
+    );
+  };
 
   const fetchTravelPlans = () => {
     //if (!userId) return;
+
+    const plans = [
+      {
+        "id": 1,
+        "planId": 1,
+        "name": "New York",
+        "description": "Going to new york yay",
+        "tags": ["ny", "summer"],
+        "routes": [],
+      },
+      {
+        "id": 2,
+        "planId": 2,
+        "name": "LA",
+        "description": "Going to LA yay",
+        "tags": ["LA", "summer"],
+        "routes": ["Hollywood"]
+      }
+    ];
 
     axios.get(`http://localhost:8080/api/travelPlans/1`)
       .then(response => {
@@ -34,6 +82,8 @@ function TravelPlan({ userId }) {
         message.error('Failed to fetch travel plans.');
         console.error(error);
       });
+    
+      setTravelPlans([...travelPlans, plans])
   };
   
   useEffect(() => {
@@ -63,26 +113,33 @@ function TravelPlan({ userId }) {
   };
 
   return (
-    <div className="travel-plan-container">
-      <Button type="primary" className="create-plan-button" onClick={handleCreatePlanClick}>
-        Create New Plan
-      </Button>
-      <CreateTravelPlan
-        visible={createPlanModalVisible}
-        onClose={handleCloseCreatePlanModal}
-        onCreate={handleCreatePlan}
-        userId={userId}
-      />
-      {travelPlans.length > 0 ? (
-        <List
-          className="plan-list"
-          dataSource={travelPlans}
-          renderItem={renderItem}
-        />
-      ) : (
-        <Empty description="You don't have any plan yet!" className="no-plan-message" />
-      )}
-    </div>
+    showDetails ? (<TravelPlanDetails plan={selectedPlan} setShowDetails={setShowDetails}/>) :
+      <div className="travel-plan-container">
+        <div className="create-plan-container">
+          <Button type="primary" className="create-plan-button" onClick={handleCreatePlanClick}>
+            Create New Plan
+          </Button>
+          <CreateTravelPlan
+            visible={createPlanModalVisible}
+            onClose={handleCloseCreatePlanModal}
+            onCreate={handleCreatePlan}
+            userId={userId}
+          />
+        </div>
+        <div className="travel-plan-list-container">
+          {travelPlans.length > 0 ? (
+            <List
+              className="plan-list"
+              dataSource={travelPlans}
+              renderItem={renderItem}
+              itemLayout="vertical"
+              bordered
+            />
+          ) : (
+            <Empty description="You don't have any plan yet!" className="no-plan-message" />
+          )}
+        </div>
+      </div>
   );
 }
 
