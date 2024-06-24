@@ -143,5 +143,4 @@ function TravelPlan({ userId }) {
   );
 }
 
-
 export default TravelPlan;

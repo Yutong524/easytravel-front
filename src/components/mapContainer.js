@@ -22,7 +22,7 @@ const options = {
 };
 
 const MapContainer = ({ addresses }) => {
-  const [markerPositions, setMarkerPositions] = useState([]); // 标记的位置状态
+  const [markerPositions, setMarkerPositions] = useState([]);
   const mapRef = useRef(); 
 
 
