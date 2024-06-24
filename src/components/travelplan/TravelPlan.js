@@ -5,9 +5,7 @@ import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 
 function TravelPlan({ userId }) {
-
-
-
+  userId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
 
@@ -56,8 +54,7 @@ function TravelPlan({ userId }) {
               ))}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span>This plan has {plan.routesCount} route{plan.routesCount !== 1 ? 's' : ''}. <a href={`/routes/${plan.id}`}>See All Route &gt;</a></span>
-              <Button type="primary" style={{ marginTop: '8px' }}>history</Button>
+              <a href={`/routes/${plan.id}`}>See All Route &gt;</a>
             </div>
           </div>
         </Card>
