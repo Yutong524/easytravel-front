@@ -24,6 +24,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
   };
 
   const onFinish = (values) => {
+    const customerId = localStorage.getItem("customer");
     if (values.planName.trim()) {
       // const payload = {
       //   name: values.planName,
@@ -32,7 +33,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
       //   author: userId
       // };
       const tagsString = tags.join(',');
-      const payload = `${values.planName};${values.description};1;${tagsString}`;   // dummy id = 1
+      const payload = `${values.planName};${values.description};${customerId};${tagsString}`;   // dummy id = 1
       // const payload = `${values.planName};${values.description};${userId}`;
 
       axios.post('http://localhost:8080/api/travelPlans/', payload, {

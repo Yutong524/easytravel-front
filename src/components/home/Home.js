@@ -4,6 +4,7 @@ import { FaRoute, FaPlane, FaHeart, FaCompass, FaMapMarkerAlt, FaChevronLeft, Fa
 import TravelPlan from '../travelplan/TravelPlan';
 import POIMap from '../POIMap';
 import CreateTravelPlan from '../travelplan/CreateTravelPlan';
+import FavoritePOI from '../FavoritePOI.js';
 
 function Home() {
   const userId = localStorage.getItem('customerId');
@@ -62,6 +63,8 @@ function Home() {
           <TravelPlan userId={userId} />
         ) : currentComponent === 'interests' ? (
           <POIMap userId={userId} />
+        ) : currentComponent === 'favorites' ? (
+          <FavoritePOI userId={userId} />
         ) : (
           <h1>Coming soon...</h1>
         )}
