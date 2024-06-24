@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Home.css';
 import { FaRoute, FaPlane, FaHeart, FaCompass, FaMapMarkerAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import TravelPlan from '../travelplan/TravelPlan';
+import POIMap from '../POIMap';
 
 function Home() {
   const userId = localStorage.getItem('customerId');
@@ -53,6 +54,8 @@ function Home() {
           </>
         ) : currentComponent === 'travelPlan' ? (
           <TravelPlan userId={userId} />
+        ) : currentComponent === 'interests' ? (
+          <POIMap userId={userId} />
         ) : (
           <h1>Coming soon...</h1>
         )}
