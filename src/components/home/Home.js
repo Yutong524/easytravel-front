@@ -3,6 +3,8 @@ import './Home.css';
 import { FaRoute, FaPlane, FaHeart, FaCompass, FaMapMarkerAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import TravelPlan from '../travelplan/TravelPlan';
 import POIMap from '../POIMap';
+import CreateTravelPlan from '../travelplan/CreateTravelPlan';
+import FavoritePOI from '../FavoritePOI.js';
 
 function Home() {
   const userId = localStorage.getItem('customerId');
@@ -17,6 +19,11 @@ function Home() {
   const handleListItemClick = (component) => {
     setCurrentComponent(component);
     setSelectedItem(component);
+  };
+
+  const navigateToTravelPlan = () => {
+    setCurrentComponent('travelPlan');
+    setSelectedItem('travelPlan');
   };
 
   return (
@@ -56,6 +63,8 @@ function Home() {
           <TravelPlan userId={userId} />
         ) : currentComponent === 'interests' ? (
           <POIMap userId={userId} />
+        ) : currentComponent === 'favorites' ? (
+          <FavoritePOI userId={userId} />
         ) : (
           <h1>Coming soon...</h1>
         )}

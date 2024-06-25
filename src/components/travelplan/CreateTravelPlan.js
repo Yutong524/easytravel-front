@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Form, Input, Button, Space, Tag, message } from 'antd';
 import axios from 'axios';
 import './CreateTravelPlan.css';
+import TravelPlan from './TravelPlan';
 
-const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
+const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
   const [form] = Form.useForm();
   const [tags, setTags] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -23,6 +24,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
   };
 
   const onFinish = (values) => {
+    const customerId = localStorage.getItem("customer");
     if (values.planName.trim()) {
       // const payload = {
       //   name: values.planName,
@@ -31,7 +33,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
       //   author: userId
       // };
       const tagsString = tags.join(',');
-      const payload = `${values.planName};${values.description};1;${tagsString}`;   // dummy id = 1
+      const payload = `${values.planName};${values.description};${customerId};${tagsString}`;   // dummy id = 1
       // const payload = `${values.planName};${values.description};${userId}`;
 
       axios.post('http://localhost:8080/api/travelPlans/', payload, {
@@ -42,7 +44,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId }) => {
         .then(response => {
           if (response.status === 201) {
             message.success('Plan created successfully!');
-            onCreate(payload);
+            onCreate(response.data);
             setTags([]);
             form.resetFields();
             onClose();

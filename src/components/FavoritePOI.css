@@ -1,0 +1,43 @@
+.favorite-poi-container {
+    min-height: 100vh; 
+    padding: 24px;
+    width: 100%;
+  }
+  
+  .favorite-poi-list-container {
+    margin-top: 20px;
+  }
+  
+  .poi-item {
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .poi-item h4 {
+    margin: 0;
+  }
+  
+  .poi-item p {
+    margin: 0 0 8px 0;
+  }
+  
+  .no-poi-message {
+    text-align: center;
+  }
+  
+  
+  .poi-list .ant-card .ant-card-body {
+    padding: 10px;
+  }
+  
+  .poi-list .ant-card .ant-card-body h4 {
+    margin: 0;
+  }
+  
+  .poi-list .ant-card .ant-card-body p {
+    margin: 0 0 8px 0;
+  }
+  
+  .poi-list .ant-card .ant-card-body .ant-btn-default {
+    margin-top: 10px;
+  }

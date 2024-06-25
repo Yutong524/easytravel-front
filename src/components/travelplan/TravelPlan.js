@@ -6,7 +6,7 @@ import CreateTravelPlan from './CreateTravelPlan';
 import TravelPlanDetails from './TravelPlanDetail';
 
 function TravelPlan({ userId }) {
-  userId = localStorage.getItem("customer");
+  const customerId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -54,8 +54,9 @@ function TravelPlan({ userId }) {
 
   const fetchTravelPlans = () => {
     //if (!userId) return;
+    const customerId = localStorage.getItem("customer");
 
-    axios.get(`http://localhost:8080/api/travelPlans/1`)
+    axios.get(`http://localhost:8080/api/travelPlans/${customerId}`)
       .then(response => {
         setTravelPlans(response.data);
       })
@@ -121,6 +122,5 @@ function TravelPlan({ userId }) {
       </div>
   );
 }
-
 
 export default TravelPlan;
