@@ -25,31 +25,9 @@ function TravelPlan({ userId }) {
     handleCloseCreatePlanModal();
   };
 
-  const viewPlanDetail = (plan) => {
-    if (plan.routes.length === 0) {
-      return <div>This plan has 0 route. See All Route</div>
-    } else{
-      return <button onClick={() => viewRoutes(plan)}>Edit</button>
-    }
-  }
-
   const viewRoutes = (plan) => {
     setSelectedPlan(plan);
     setShowDetails(true);
-  };
-
-  const tempRenderItem = (plan) => {
-    return (
-      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
-        <List.Item.Meta
-          title={plan.name}
-          description={plan.description}
-        />
-        <div className="plan-detail-container">
-          <button>History</button>
-        </div>
-      </List.Item>
-    );
   };
 
   const fetchTravelPlans = () => {
@@ -84,7 +62,7 @@ function TravelPlan({ userId }) {
               ))}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <a href={`/routes/${plan.id}`}>See All Route &gt;</a>
+              <a onClick={() => viewRoutes(plan)}>See All Route &gt;</a>
             </div>
           </div>
         </Card>
