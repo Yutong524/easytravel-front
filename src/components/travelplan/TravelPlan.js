@@ -55,25 +55,6 @@ function TravelPlan({ userId }) {
   const fetchTravelPlans = () => {
     //if (!userId) return;
 
-    const plans = [
-      {
-        "id": 1,
-        "planId": 1,
-        "name": "New York",
-        "description": "Going to new york yay",
-        "tags": ["ny", "summer"],
-        "routes": [],
-      },
-      {
-        "id": 2,
-        "planId": 2,
-        "name": "LA",
-        "description": "Going to LA yay",
-        "tags": ["LA", "summer"],
-        "routes": ["Hollywood"]
-      }
-    ];
-
     axios.get(`http://localhost:8080/api/travelPlans/1`)
       .then(response => {
         setTravelPlans(response.data);
@@ -82,13 +63,11 @@ function TravelPlan({ userId }) {
         message.error('Failed to fetch travel plans.');
         console.error(error);
       });
-    
-      setTravelPlans([...travelPlans, plans])
   };
   
   useEffect(() => {
     fetchTravelPlans();
-  }, [userId]);
+  }, [userId, createPlanModalVisible]);
 
 
   const renderItem = (plan) => {
