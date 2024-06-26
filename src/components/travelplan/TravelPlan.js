@@ -9,6 +9,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 function TravelPlan({ userId }) {
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
+  const [editPlanModalVisible, setEditPlanModalVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
@@ -29,6 +30,18 @@ function TravelPlan({ userId }) {
     setSelectedPlan(plan);
     setShowDetails(true);
   };
+
+  const deleteTravelPlan = (planId) => {
+    axios.delete(`http://localhost:8080/api/travelPlan/${planId}`)
+      .then(response => {
+        message.success(response);
+
+      })
+      .catch(error => {
+        message.error('Failed to delete travel plans.');
+        console.error(error);
+      });
+  }
 
   const fetchTravelPlans = () => {
     //if (!userId) return;
@@ -68,7 +81,7 @@ function TravelPlan({ userId }) {
                   <Button type="default" icon={<EditOutlined />} />
                 </Tooltip>
                 <Tooltip title="edit">
-                  <Button danger icon={<DeleteOutlined />} />
+                  <Button onClick={() => deleteTravelPlan(plan.planId)} danger icon={<DeleteOutlined />} />
                 </Tooltip>
               </div>
             </div>
