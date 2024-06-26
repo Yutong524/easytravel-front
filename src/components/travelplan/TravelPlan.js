@@ -97,7 +97,7 @@ function TravelPlan({ userId }) {
                   <EditTravelPlan
                     visible={editPlanModalVisible}
                     onClose={handleCloseEditPlanModal}
-                    onCreate={handleEditPlan}
+                    onEdit={handleEditPlan}
                     plan={plan}
                   />
                 </Tooltip>
