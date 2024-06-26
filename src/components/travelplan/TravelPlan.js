@@ -10,6 +10,7 @@ function TravelPlan({ userId }) {
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
   const [editPlanModalVisible, setEditPlanModalVisible] = useState(false);
+  const [deletedPlan, setDeletedPlan] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
@@ -32,10 +33,10 @@ function TravelPlan({ userId }) {
   };
 
   const deleteTravelPlan = (planId) => {
-    axios.delete(`http://localhost:8080/api/travelPlan/${planId}`)
-      .then(response => {
-        message.success(response);
-
+    axios.delete(`http://localhost:8080/api/travelPlans/${planId}`)
+      .then(_ => {
+        setDeletedPlan(true);
+        message.success("Successfully deleted a travel plan");
       })
       .catch(error => {
         message.error('Failed to delete travel plans.');
@@ -58,8 +59,9 @@ function TravelPlan({ userId }) {
   };
   
   useEffect(() => {
+    setDeletedPlan(false);
     fetchTravelPlans();
-  }, [userId, createPlanModalVisible]);
+  }, [userId, createPlanModalVisible, deletedPlan]);
 
 
   const renderItem = (plan) => {
