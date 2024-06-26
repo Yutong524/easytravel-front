@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, List, Empty, message, Card, Tag } from 'antd';
+import { Button, List, Empty, message, Card, Tag, Tooltip } from 'antd';
 import './TravelPlan.css';
 import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 import TravelPlanDetails from './TravelPlanDetail';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 function TravelPlan({ userId }) {
-  const customerId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -63,6 +63,14 @@ function TravelPlan({ userId }) {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <a onClick={() => viewRoutes(plan)}>See All Route &gt;</a>
+              <div style={{ paddingTop: "60px",display: 'flex', flexDirection: 'row' }}>
+                <Tooltip title="edit">
+                  <Button type="default" icon={<EditOutlined />} />
+                </Tooltip>
+                <Tooltip title="edit">
+                  <Button danger icon={<DeleteOutlined />} />
+                </Tooltip>
+              </div>
             </div>
           </div>
         </Card>
