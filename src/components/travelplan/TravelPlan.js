@@ -4,6 +4,7 @@ import './TravelPlan.css';
 import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 import TravelPlanDetails from './TravelPlanDetail';
+import EditTravelPlan from './EditTravelPlan';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 function TravelPlan({ userId }) {
@@ -17,6 +18,18 @@ function TravelPlan({ userId }) {
   const handleCreatePlanClick = () => {
     setCreatePlanModalVisible(true);
   };
+
+  const handleEditPlanClick = () => {
+    setEditPlanModalVisible(true);
+  }
+
+  const handleCloseEditPlanModal = () => {
+    setEditPlanModalVisible(false);
+  }
+
+  const handleEditPlan = () => {
+    handleCloseEditPlanModal()
+  }
 
   const handleCloseCreatePlanModal = () => {
     setCreatePlanModalVisible(false);
@@ -80,7 +93,13 @@ function TravelPlan({ userId }) {
               <a onClick={() => viewRoutes(plan)}>See All Route &gt;</a>
               <div style={{ paddingTop: "60px",display: 'flex', flexDirection: 'row' }}>
                 <Tooltip title="edit">
-                  <Button type="default" icon={<EditOutlined />} />
+                  <Button type="default" onClick={handleEditPlanClick} icon={<EditOutlined />} />
+                  <EditTravelPlan
+                    visible={editPlanModalVisible}
+                    onClose={handleCloseEditPlanModal}
+                    onCreate={handleEditPlan}
+                    plan={plan}
+                  />
                 </Tooltip>
                 <Tooltip title="edit">
                   <Button onClick={() => deleteTravelPlan(plan.planId)} danger icon={<DeleteOutlined />} />
