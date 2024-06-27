@@ -1,20 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Button, List, Empty, message, Card, Tag } from 'antd';
+import { Button, List, Empty, message, Card, Tag, Tooltip } from 'antd';
 import './TravelPlan.css';
 import axios from 'axios';
 import CreateTravelPlan from './CreateTravelPlan';
 import TravelPlanDetails from './TravelPlanDetail';
+import EditTravelPlan from './EditTravelPlan';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 function TravelPlan({ userId }) {
-  const customerId = localStorage.getItem("customer");
   const [travelPlans, setTravelPlans] = useState([]);
   const [createPlanModalVisible, setCreatePlanModalVisible] = useState(false);
+  const [editPlanModalVisible, setEditPlanModalVisible] = useState(false);
+  const [deletedPlan, setDeletedPlan] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   const handleCreatePlanClick = () => {
     setCreatePlanModalVisible(true);
   };
+
+  const handleEditPlanClick = () => {
+    setEditPlanModalVisible(true);
+  }
+
+  const handleCloseEditPlanModal = () => {
+    setEditPlanModalVisible(false);
+  }
+
+  const handleEditPlan = () => {
+    handleCloseEditPlanModal()
+  }
 
   const handleCloseCreatePlanModal = () => {
     setCreatePlanModalVisible(false);
@@ -25,54 +40,26 @@ function TravelPlan({ userId }) {
     handleCloseCreatePlanModal();
   };
 
-  const viewPlanDetail = (plan) => {
-    if (plan.routes.length === 0) {
-      return <div>This plan has 0 route. See All Route</div>
-    } else{
-      return <button onClick={() => viewRoutes(plan)}>Edit</button>
-    }
-  }
-
   const viewRoutes = (plan) => {
     setSelectedPlan(plan);
     setShowDetails(true);
   };
 
-  const tempRenderItem = (plan) => {
-    return (
-      <List.Item className="plan-item" extra={viewPlanDetail(plan)}>
-        <List.Item.Meta
-          title={plan.name}
-          description={plan.description}
-        />
-        <div className="plan-detail-container">
-          <button>History</button>
-        </div>
-      </List.Item>
-    );
-  };
+  const deleteTravelPlan = (planId) => {
+    axios.delete(`http://localhost:8080/api/travelPlans/${planId}`)
+      .then(_ => {
+        setDeletedPlan(true);
+        message.success("Successfully deleted a travel plan");
+      })
+      .catch(error => {
+        message.error('Failed to delete travel plans.');
+        console.error(error);
+      });
+  }
 
   const fetchTravelPlans = () => {
     //if (!userId) return;
     const customerId = localStorage.getItem("customer");
-    const plans = [
-      {
-        "id": 1,
-        "planId": 1,
-        "name": "New York",
-        "description": "Going to new york yay",
-        "tags": ["ny", "summer"],
-        "routes": [],
-      },
-      {
-        "id": 2,
-        "planId": 2,
-        "name": "LA",
-        "description": "Going to LA yay",
-        "tags": ["LA", "summer"],
-        "routes": ["Hollywood"]
-      }
-    ];
 
     axios.get(`http://localhost:8080/api/travelPlans/${customerId}`)
       .then(response => {
@@ -82,13 +69,12 @@ function TravelPlan({ userId }) {
         message.error('Failed to fetch travel plans.');
         console.error(error);
       });
-    
-      setTravelPlans([...travelPlans, plans])
   };
   
   useEffect(() => {
+    setDeletedPlan(false);
     fetchTravelPlans();
-  }, [userId]);
+  }, [userId, createPlanModalVisible, deletedPlan]);
 
 
   const renderItem = (plan) => {
@@ -104,7 +90,21 @@ function TravelPlan({ userId }) {
               ))}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <a href={`/routes/${plan.id}`}>See All Route &gt;</a>
+              <a onClick={() => viewRoutes(plan)}>See All Route &gt;</a>
+              <div style={{ paddingTop: "60px",display: 'flex', flexDirection: 'row' }}>
+                <Tooltip title="edit">
+                  <Button type="default" onClick={handleEditPlanClick} icon={<EditOutlined />} />
+                  <EditTravelPlan
+                    visible={editPlanModalVisible}
+                    onClose={handleCloseEditPlanModal}
+                    onEdit={handleEditPlan}
+                    plan={plan}
+                  />
+                </Tooltip>
+                <Tooltip title="edit">
+                  <Button onClick={() => deleteTravelPlan(plan.planId)} danger icon={<DeleteOutlined />} />
+                </Tooltip>
+              </div>
             </div>
           </div>
         </Card>
