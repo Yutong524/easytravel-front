@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Form, Input, Button, Space, Tag, message } from 'antd';
 import axios from 'axios';
-import './CreateTravelPlan.css';
-import TravelPlan from './TravelPlan';
 
-const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
+const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
   const [form] = Form.useForm();
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(plan.tags);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef(null);
+
 
   const handleAddNewTag = () => {
     if (inputValue && !tags.includes(inputValue)) {
@@ -24,42 +23,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
   };
 
   const onFinish = (values) => {
-    const customerId = localStorage.getItem("customer");
-    if (values.planName.trim()) {
-      // const payload = {
-      //   name: values.planName,
-      //   description: values.description,
-      //   tags: tags,
-      //   author: userId
-      // };
-      const tagsString = tags.join(',');
-      const payload = `${values.planName};${values.description};${customerId};${tagsString}`;   // dummy id = 1
-      // const payload = `${values.planName};${values.description};${userId}`;
-
-      axios.post('http://localhost:8080/api/travelPlans/', payload, {
-        headers: {
-          'Content-Type': 'text/plain'
-        }
-      })
-        .then(response => {
-          if (response.status === 201) {
-            message.success('Plan created successfully!');
-            onCreate(response.data);
-            setTags([]);
-            form.resetFields();
-            onClose();
-          }
-        })
-        .catch(error => {
-          if (error.response && error.response.status === 405) {
-            message.error('The plan name exists.');
-          } else {
-            message.error('An error occurred. Please try again.');
-          }
-        });
-    } else {
-      form.setFields([{ name: 'planName', errors: [new Error('Please input your plan name!')] }]);
-    }
+    console.log(values)
   };
 
   const handleInputChange = (e) => {
@@ -83,23 +47,26 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
 
   return (
     <Modal
-      title="Create New Plan"
+      title="Edit Travel Plan"
       open={visible}
       onCancel={onClose}
-      className="create-travel-plan-modal"
+      className="edit-travel-plan-modal"
+      destroyOnClose={true}
       footer={null}
     >
       <Form
         form={form}
+        initialValues={plan}
         layout="vertical"
         onFinish={onFinish}
+        preserve={false}
       >
         <Form.Item
-          name="planName"
+          name="name"
           label="Plan Name"
           rules={[{ required: true, message: 'Please input your plan name!' }]}
         >
-          <Input placeholder="Please input your plan name" />
+          <Input />
         </Form.Item>
         <Form.Item label="Tags" className="form-item">
           <div className="tag-input-wrapper">
@@ -126,7 +93,7 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
           </div>
         </Form.Item>
         <Form.Item name="description" label="Description">
-          <Input.TextArea placeholder="Please input your plan description" />
+          <Input.TextArea />
         </Form.Item>
         <Form.Item>
           <Space className="button-wrapper">
@@ -143,4 +110,4 @@ const CreateTravelPlan = ({ visible, onClose, onCreate, userId}) => {
   );
 };
 
-export default CreateTravelPlan;
+export default EditTravelPlan;
