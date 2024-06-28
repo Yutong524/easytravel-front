@@ -54,6 +54,18 @@ function MyTravelRoute({ userId }) {
     }
   };
 
+  const toggleVisibility = async (routeId, currentVisibility) => {
+    try {
+      await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/visibility`, {
+        visibility: !currentVisibility
+      });
+      fetchTravelRoutes(); // Refresh the list to reflect changes
+    } catch (error) {
+      message.error('Failed to toggle visibility.');
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchTravelRoutes();
   }, [userId]);
@@ -75,11 +87,11 @@ function MyTravelRoute({ userId }) {
     return `${duration.days()} days`;
   };
 
-  const renderPOIDetails = (poiArrangment) => {
-    if (!Array.isArray(poiArrangment)) {
+  const renderPOIDetails = (poiArrangement) => {
+    if (!Array.isArray(poiArrangement)) {
       return <p>No POI arrangements available.</p>;
     }
-    return poiArrangment.map((poi, index) => (
+    return poiArrangement.map((poi, index) => (
       <div key={index} className="poi-detail">
         <p><strong>{poiNames[poi.poiId] || 'Loading...'}</strong></p>
         <p className="indented">From: {moment(poi.startTime).format('YYYY-MM-DD HH:mm:ss')}</p>
@@ -100,6 +112,13 @@ function MyTravelRoute({ userId }) {
           <div>
             <Button type="default" onClick={() => toggleExpand(route.id)}>
               {expandedRouteIds.includes(route.id) ? 'Collapse' : 'Expand'}
+            </Button>
+            <Button
+              type="default"
+              onClick={() => toggleVisibility(route.routeId, route.visibility)}
+              style={{ marginLeft: '10px' }}
+            >
+              {route.visibility ? 'Set Private' : 'Set Public'}
             </Button>
           </div>
         </div>
@@ -134,6 +153,7 @@ function MyTravelRoute({ userId }) {
 }
 
 export default MyTravelRoute;
+
 
 
 
