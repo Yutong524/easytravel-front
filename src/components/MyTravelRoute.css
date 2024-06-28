@@ -1,0 +1,51 @@
+.my-travel-route-container {
+    min-height: 100vh; 
+    padding: 24px;
+    width: 100%;
+  }
+  
+  .my-travel-route-list-container {
+    margin-top: 20px;
+  }
+  
+  .route-item {
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .route-item h4 {
+    margin: 0;
+  }
+  
+  .route-item p {
+    margin: 0 0 8px 0;
+  }
+  
+  .no-route-message {
+    text-align: center;
+  }
+  
+  .route-list .ant-card .ant-card-body {
+    padding: 10px;
+  }
+  
+  .route-list .ant-card .ant-card-body h4 {
+    margin: 0;
+  }
+  
+  .route-list .ant-card .ant-card-body p {
+    margin: 0 0 8px 0;
+  }
+  
+  .route-list .ant-card .ant-card-body .ant-btn-default {
+    margin-top: 10px;
+  }
+  
+  .route-details {
+    margin-top: 10px;
+  }
+
+  .indented {
+    padding-left: 40px;
+  }
+  

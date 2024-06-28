@@ -3,7 +3,7 @@ import { List, Card, Tag, Button, message, Empty } from 'antd';
 import axios from 'axios';
 import './FavoritePOI.css';
 
-function FavoritePOI({ userId }) {
+function MyFavoritePOI({ userId }) {
   const customerId = localStorage.getItem("customer");
   const [favoritePOIs, setFavoritePOIs] = useState([]);
 
@@ -83,4 +83,4 @@ function FavoritePOI({ userId }) {
   );
 }
 
-export default FavoritePOI;
+export default MyFavoritePOI;
