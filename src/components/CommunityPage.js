@@ -18,6 +18,7 @@ function CommunityPage() {
     const [loading, setLoading] = useState(false);
     const [expandedRouteIds, setExpandedRouteIds] = useState([]);
     const [poiNames, setPoiNames] = useState({});
+    const [planNames, setPlanNames] = useState({});
     const [showFavorites, setShowFavorites] = useState(false);
 
     useEffect(() => {
@@ -71,6 +72,20 @@ function CommunityPage() {
         }
     };
 
+    const fetchPlanName = async (planId) => {
+        if (planId === 0) {
+            setPlanNames(prevState => ({ ...prevState, [planId]: 'No related plan' }));
+            return;
+        }
+        try {
+            const response = await axios.get(`http://localhost:8080/api/travelPlans/plans/${planId}`);
+            setPlanNames(prevState => ({ ...prevState, [planId]: response.data.name }));
+        } catch (error) {
+            console.error(`Failed to fetch plan name for planId: ${planId}`, error);
+            setPlanNames(prevState => ({ ...prevState, [planId]: 'Failed to fetch plan name' }));
+        }
+    };
+
     const handleSearch = () => {
         if (selectedPois.length === 0) {
             message.warning('Please select at least one POI.');
@@ -87,6 +102,7 @@ function CommunityPage() {
         .then(response => {
             setRoutes(response.data);
             response.data.forEach(route => {
+                fetchPlanName(route.planId);
                 route.poiArrangement && route.poiArrangement.forEach(poi => {
                     fetchPoiName(poi.poiId);
                 });
@@ -149,11 +165,12 @@ function CommunityPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>
                         <h4>{route.name}</h4>
+                        <p>{planNames[route.planId] || 'Loading...'}</p>
                         <p>Duration: {calculateDuration(route.startDate, route.endDate)}</p>
                     </div>
                     <div>
-                        <Button type="default" onClick={() => toggleExpand(route.id)}>
-                            {expandedRouteIds.includes(route.id) ? 'Collapse' : 'Expand'}
+                        <Button type="default" onClick={() => toggleExpand(route.routeId)}>
+                            {expandedRouteIds.includes(route.routeId) ? 'Collapse' : 'Expand'}
                         </Button>
                         <Button 
                             type={favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? 'danger' : 'primary'} 
@@ -253,6 +270,7 @@ function CommunityPage() {
 }
 
 export default CommunityPage;
+
 
 
 
