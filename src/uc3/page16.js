@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Radio, Button, message } from 'antd';
 import './page12.css';
 
-const CreateNewRouteStep5 = ({ routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, onNext, onBack, onCancel }) => {
+const CreateNewRouteStep5 = ({ prevPlan, routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, onNext, onBack, onCancel }) => {
   const [priority, setPriority] = useState('NA');
   const [routesInPlan, setRoutesInPlan] = useState([]);
   const customerId = localStorage.getItem("customer");

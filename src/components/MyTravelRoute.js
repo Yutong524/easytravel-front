@@ -250,7 +250,8 @@ function MyTravelRoute({ userId }) {
             onNext={handleNextStep}
           />
         ) : modalStep === 4 ? (
-          <CreateNewRouteStep4
+          <CreateNewRouteStep4 
+            prevPlan={""}
             routeName={routeName}
             startDate={startDate}
             endDate={endDate}

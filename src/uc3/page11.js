@@ -5,7 +5,8 @@ import './page12.css';
 
 const { RangePicker } = DatePicker;
 
-const CreateNewRouteStep2 = ({ routeName, onBack, onCancel, onNext }) => {
+const CreateNewRouteStep2 = ({ prevPlan, routeName, onBack, onCancel, onNext }) => {
+
   const [dates, setDates] = useState([]);
   const [error, setError] = useState('');
 

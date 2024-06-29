@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './page12.css';
 
-const CreateNewRouteStep1 = ({ onNext, onCancel }) => {
+const CreateNewRouteStep1 = ({ prevPlan, onNext, onCancel }) => {
   const [routeName, setRouteName] = useState('');
   const [error, setError] = useState(false);
 

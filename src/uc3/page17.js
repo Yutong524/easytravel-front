@@ -6,7 +6,7 @@ import './page12.css';
 
 const { RangePicker } = DatePicker;
 
-const CreateNewRouteStep6 = ({ routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority, onCreate, onBack, onCancel }) => {
+const CreateNewRouteStep6 = ({ prevPlan, routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority, onCreate, onBack, onCancel }) => {
   const [poiSchedules, setPoiSchedules] = useState(selectedPlaces.map(poi => ({ ...poi, date: null, startTime: null, endTime: null })));
   const [showWarning, setShowWarning] = useState(false);
 

@@ -6,7 +6,8 @@ import './page12.css';
 const { Panel } = Collapse;
 const { Search } = Input;
 
-const CreateNewRouteStep3 = ({ routeName, startDate, endDate, onNext, onBack, onCancel }) => {
+const CreateNewRouteStep3 = ({ prevPlan, routeName, startDate, endDate, onNext, onBack, onCancel }) => {
+
   const [favoritePlaces, setFavoritePlaces] = useState([]);
   const [allPlaces, setAllPlaces] = useState([]);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
