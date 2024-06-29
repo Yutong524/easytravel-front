@@ -1,29 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { DatePicker, message } from 'antd';
+import moment from 'moment';
+import './page12.css';
 
-const CreateNewRouteStep2 = ({ onNext, onBack, onCancel }) => {
-    return (
-        <div className="create-new-route-step">
-            <h2>Create New Route</h2>
-            <p>Select days for your travel (1~15 days)</p>
-            <div className="calendar">
-                <div className="days">S M T W T F S</div>
-                <div className="dates">
-                    <span>26 27 28 29 30 31 1</span>
-                    <span>2 3 4 5 6 7 8</span>
-                    <span>9 10 11 12 13 14 15</span>
-                    <span>16 17 18 19 20 21 22</span>
-                    <span>23 24 25 26 27 28 29</span>
-                    <span>30 1 2 3 4 5 6</span>
-                </div>
-            </div>
-            <div className="buttons">
-                <button onClick={onBack}>Back</button>
-                <button onClick={onNext}>Next</button>
-                <button onClick={onCancel}>Cancel</button>
-            </div>
-        </div>
-    );
+const { RangePicker } = DatePicker;
+
+const CreateNewRouteStep2 = ({ routeName, onBack, onCancel, onNext }) => {
+  const [dates, setDates] = useState([]);
+  const [error, setError] = useState('');
+
+  const disabledDate = (current) => {
+    return current && current < moment().startOf('day');
+  };
+
+  const handleDateChange = (value) => {
+    setDates(value);
+    setError('');
+  };
+
+  const handleNextClick = () => {
+    if (!dates || dates.length !== 2) {
+      setError('Please select a valid date range.');
+      return;
+    }
+
+    const startDate = dates[0];
+    const endDate = dates[1];
+    const duration = moment.duration(endDate.diff(startDate)).days() + 1;
+
+    if (duration < 1 || duration > 15) {
+      setError('The duration between start date and end date must be between 1 and 15 days.');
+      return;
+    }
+
+    setError('');
+    onNext(routeName, startDate, endDate);
+  };
+
+  return (
+    <div className="create-new-route-step">
+      <h2>Create New Route</h2>
+      <p>Select days for your travel (1~15 days)</p>
+      <RangePicker
+        disabledDate={disabledDate}
+        onChange={handleDateChange}
+      />
+      {error && <p className="error-message">{error}</p>}
+      <div className="buttons">
+        <button onClick={onBack}>Back</button>
+        <button onClick={handleNextClick}>Next</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </div>
+  );
 };
 
 export default CreateNewRouteStep2;
-
