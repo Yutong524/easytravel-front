@@ -57,7 +57,7 @@ const MapContainer = ({ addresses }) => {
       setMarkerPositions(validLocations); 
       if (validLocations.length > 0) {
         mapRef.current.panTo(validLocations[0]); 
-        mapRef.current.setZoom(8); 
+        mapRef.current.setZoom(12); 
       } else {
         mapRef.current.panTo(defaultCenter); 
         mapRef.current.setZoom(2); 
