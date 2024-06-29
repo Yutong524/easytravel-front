@@ -14,12 +14,14 @@ function TravelPlan({ userId }) {
   const [deletedPlan, setDeletedPlan] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [planToEdit, setPlanToEdit] = useState(null);
 
   const handleCreatePlanClick = () => {
     setCreatePlanModalVisible(true);
   };
 
-  const handleEditPlanClick = () => {
+  const handleEditPlanClick = (plan) => {
+    setPlanToEdit(plan);
     setEditPlanModalVisible(true);
   }
 
@@ -27,8 +29,9 @@ function TravelPlan({ userId }) {
     setEditPlanModalVisible(false);
   }
 
-  const handleEditPlan = () => {
-    handleCloseEditPlanModal()
+  const handleEditPlan = async (updatedPlan) => {
+    setTravelPlans(travelPlans.map(plan => plan.planId === updatedPlan.planId ? updatedPlan : plan));
+    handleCloseEditPlanModal();
   }
 
   const handleCloseCreatePlanModal = () => {
@@ -58,7 +61,6 @@ function TravelPlan({ userId }) {
   }
 
   const fetchTravelPlans = () => {
-    //if (!userId) return;
     const customerId = localStorage.getItem("customer");
 
     axios.get(`http://localhost:8080/api/travelPlans/${customerId}`)
@@ -76,7 +78,6 @@ function TravelPlan({ userId }) {
     fetchTravelPlans();
   }, [userId, createPlanModalVisible, deletedPlan]);
 
-
   const renderItem = (plan) => {
     return (
       <List.Item className="plan-item">
@@ -93,15 +94,9 @@ function TravelPlan({ userId }) {
               <a onClick={() => viewRoutes(plan)}>See All Route &gt;</a>
               <div style={{ paddingTop: "60px",display: 'flex', flexDirection: 'row' }}>
                 <Tooltip title="edit">
-                  <Button type="default" onClick={handleEditPlanClick} icon={<EditOutlined />} />
-                  <EditTravelPlan
-                    visible={editPlanModalVisible}
-                    onClose={handleCloseEditPlanModal}
-                    onEdit={handleEditPlan}
-                    plan={plan}
-                  />
+                  <Button type="default" onClick={() => handleEditPlanClick(plan)} icon={<EditOutlined />} />
                 </Tooltip>
-                <Tooltip title="edit">
+                <Tooltip title="delete">
                   <Button onClick={() => deleteTravelPlan(plan.planId)} danger icon={<DeleteOutlined />} />
                 </Tooltip>
               </div>
@@ -139,6 +134,15 @@ function TravelPlan({ userId }) {
             <Empty description="You don't have any plan yet!" className="no-plan-message" />
           )}
         </div>
+        {planToEdit && (
+          <EditTravelPlan
+            visible={editPlanModalVisible}
+            onClose={handleCloseEditPlanModal}
+            onEdit={handleEditPlan}
+            plan={planToEdit}
+            buttonText="Edit"
+          />
+        )}
       </div>
   );
 }

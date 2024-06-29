@@ -6,6 +6,7 @@ import POIMap from '../POIMap';
 import CreateTravelPlan from '../travelplan/CreateTravelPlan';
 import MyFavoritePOI from '../MyFavoritePOI.js';
 import MyTravelRoute from '../MyTravelRoute.js';
+import CommunityPage from '../CommunityPage.js';
 
 function Home() {
   const userId = localStorage.getItem('customerId');
@@ -68,6 +69,8 @@ function Home() {
           <MyFavoritePOI userId={userId} />
         ) : currentComponent === 'route' ? (
           <MyTravelRoute userId={userId} />
+        ) : currentComponent === 'community' ? (
+          <CommunityPage  />
         ) : (
           <h1>Coming soon...</h1>
         )}

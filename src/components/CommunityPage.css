@@ -1,0 +1,25 @@
+.community-page-container {
+    min-height: 100vh;
+    padding: 24px;
+    width: 100%;
+  }
+  
+  .search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .routes-list-container {
+    width: 100%;
+  }
+  
+  .routes-list {
+    margin-bottom: 24px;
+  }
+  
+  .no-routes-message {
+    margin-top: 24px;
+  }
+  
