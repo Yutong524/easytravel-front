@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, Card, Button, Collapse, Empty, message, Modal, Tooltip, Select } from 'antd';
-import { LeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { LeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import './TravelPlanDetail.css';
 import moment from 'moment';
 import CreateNewRouteStep1 from '../../uc3/page10';
@@ -127,14 +127,24 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
   };
 
   const changePriority = async (routeId, newPriority) => {
+    if (newPriority === "none") {
+      try {
+        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/0`, { newPriority: newPriority });
+        message.success(`Priority changed to ${newPriority}`);
+        fetchRoutes(plan.planId);
+      } catch (error) {
+        message.error('Failed to change the priority.');
+        console.error(error);
+      }
+      return;
+    }
+
     const existingRoute = routes.find(route => route.priority === newPriority);
     if (existingRoute) {
       const confirmReplace = window.confirm(`There is already a route with ${newPriority} priority. Do you want to replace it?`);
       if (confirmReplace) {
         try {
-          await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/${existingRoute.routeId}`, {
-            newPriority
-          });
+          await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/${existingRoute.routeId}`, { newPriority: newPriority });
           message.success(`Priority changed to ${newPriority}`);
           fetchRoutes(plan.planId);
         } catch (error) {
@@ -144,9 +154,7 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
       }
     } else {
       try {
-        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}`, {
-          newPriority
-        });
+        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/0`, { newPriority: newPriority });
         message.success(`Priority changed to ${newPriority}`);
         fetchRoutes(plan.planId);
       } catch (error) {
@@ -179,10 +187,10 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
           </div>
           <div>
             <Button type="default" onClick={() => toggleExpand(route.routeId)}>
-              {expandedRouteIds.includes(route.id) ? 'Collapse' : 'Expand'}
+              {expandedRouteIds.includes(route.routeId) ? 'Collapse' : 'Expand'}
             </Button>
             <Tooltip title="delete">
-              <Button danger icon={<DeleteOutlined />} onClick={() => deleteRoute(route.id)} style={{ marginLeft: '10px' }} />
+              <Button danger icon={<DeleteOutlined />} onClick={() => deleteRoute(route.routeId)} style={{ marginLeft: '10px' }} />
             </Tooltip>
             <Select
               defaultValue={route.priority || "none"}
