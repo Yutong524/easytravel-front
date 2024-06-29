@@ -2,12 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Form, Input, Button, Space, Tag, message } from 'antd';
 import axios from 'axios';
 
-const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
+const EditTravelPlan = ({ visible, onClose, onEdit, plan, buttonText = "Edit" }) => {
   const [form] = Form.useForm();
-  const [tags, setTags] = useState(plan.tags);
+  const [tags, setTags] = useState(plan.tags || []);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef(null);
-
 
   const handleAddNewTag = () => {
     if (inputValue && !tags.includes(inputValue)) {
@@ -22,10 +21,6 @@ const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
     }
   };
 
-  const onFinish = (values) => {
-    console.log(values)
-  };
-
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -33,6 +28,29 @@ const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
   const handleClose = (removedTag) => {
     const newTags = tags.filter(tag => tag !== removedTag);
     setTags(newTags);
+  };
+
+  const onFinish = async (values) => {
+    const { name, description } = values;
+    const author = plan.author; // Assuming author remains unchanged
+    const planId = plan.planId;
+    const requestBody = `${name};${description};${author};${tags.join(',')};${planId}`;
+    
+    try {
+      await axios.put('http://localhost:8080/api/travelPlans/', requestBody, {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      });
+      message.success("Successfully edited the travel plan");
+      onEdit({ ...plan, name, description, tags });
+      setTags([]);
+      form.resetFields();
+      onClose();
+    } catch (error) {
+      message.error('Failed to edit travel plan.');
+      console.error(error);
+    }
   };
 
   const showInput = () => {
@@ -48,7 +66,7 @@ const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
   return (
     <Modal
       title="Edit Travel Plan"
-      open={visible}
+      visible={visible}
       onCancel={onClose}
       className="edit-travel-plan-modal"
       destroyOnClose={true}
@@ -97,8 +115,8 @@ const EditTravelPlan = ({ visible, onClose, onEdit, plan}) => {
         </Form.Item>
         <Form.Item>
           <Space className="button-wrapper">
-            <Button type="primary" htmlType="submit" className="create-button">
-              Create
+            <Button type="primary" htmlType="submit" className="edit-button">
+              {buttonText}
             </Button>
             <Button onClick={onClose} className="cancel-button">
               Cancel
