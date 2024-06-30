@@ -8,6 +8,10 @@ import CreateNewRouteStep1 from './uc3/page10';
 import CreateNewRouteStep2 from './uc3/page11';
 import CreateNewRouteStep3 from './uc3/page12';
 import MyTravelRoute from './components/MyTravelRoute';
+import withNavigation from './components/login/withNavigation';
+
+const LoginWithNavigation = withNavigation(Login);
+const RegisterWithNavigation = withNavigation(Register);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,14 +25,14 @@ function App() {
             isAuthenticated ? (
               <Home />
             ) : (
-              <Login onSuccess={() => setIsAuthenticated(true)} onRegister={() => setIsAuthenticated(false)} />
+              <LoginWithNavigation onSuccess={() => setIsAuthenticated(true)} onRegister={() => setIsAuthenticated(false)} />
             )
           }
         />
         <Route
           path="/register"
           element={
-            <Register onSuccess={() => setIsAuthenticated(false)} />
+            <RegisterWithNavigation onSuccess={() => setIsAuthenticated(false)} />
           }
         />
         <Route

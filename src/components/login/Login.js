@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Form, Input, message, Typography, Layout } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { LockFilled, UserOutlined } from "@ant-design/icons";
 import axios from 'axios';
 import './Login.css';  
+import withNavigation from './withNavigation';
 
 class Login extends React.Component {
   state = {
@@ -14,20 +15,30 @@ class Login extends React.Component {
       loading: true,
     });
     axios.post('http://localhost:8080/api/customers/login', data)
-    .then(response => {
+      .then(response => {
         localStorage.setItem('customer', JSON.stringify(response.data));
         message.success('Login Successful');
         this.props.onSuccess(); 
-      this.setState({
-        loading: false,
+        this.setState({
+          loading: false,
+        });
+      })
+      .catch(error => {
+        if (error.response) {
+          if (error.response.status === 500) {
+            message.error('Wrong Credential. Please check your username or password.');
+          } else if (error.response.data && error.response.data.message) {
+            message.error(`Login Failed: ${error.response.data.message}`);
+          } else {
+            message.error(`Login Failed: ${error.response.statusText}`);
+          }
+        } else {
+          message.error(`Login Failed: ${error.message}`);
+        }
+        this.setState({
+          loading: false,
+        });
       });
-    })
-    .catch(error => {
-      message.error(`Login Failed: ${error.response ? error.response.data.message : error.message}`);
-      this.setState({
-        loading: false,
-      });
-    });
   };
 
   onReset = () => {
@@ -73,8 +84,8 @@ class Login extends React.Component {
               </div>
             </Form.Item>
             <Form.Item>
-              <div style={{ textAlign: 'center',color:'white' }}>
-                Don't have an account? <a onClick={() => this.props.onRegister()}>Register</a>
+              <div style={{ textAlign: 'center', color: 'white' }}>
+                Don't have an account? <a onClick={() => this.props.navigate('/register')}>Register</a>
               </div>
             </Form.Item>
           </Form>
@@ -84,4 +95,4 @@ class Login extends React.Component {
   };
 }
 
-export default Login;
+export default withNavigation(Login);

@@ -3,6 +3,7 @@ import { Button, Form, Input, message } from "antd";
 import { LockFilled, UserOutlined } from "@ant-design/icons";
 import axios from 'axios';
 import "./Login.css"; 
+import withNavigation from './withNavigation';
 
 class Register extends React.Component {
   state = {
@@ -19,13 +20,17 @@ class Register extends React.Component {
         this.setState({
           loading: false,
         });
-        this.props.onSuccess();
+        this.props.navigate('/');
       })
       .catch(error => {
-        message.error(`Registration Failed: ${error.response ? error.response.data.message : error.message}`);
         this.setState({
           loading: false,
         });
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Registration Failed: ${error.response.data.message}`);
+        } else {
+          message.error(`Registration Failed: ${error.message}`);
+        }
       });
   };
 
@@ -36,6 +41,7 @@ class Register extends React.Component {
     }
     return Promise.resolve();
   };
+
   onReset = () => {
     this.formRef.current.resetFields();
   };
@@ -82,8 +88,8 @@ class Register extends React.Component {
 
             <Form.Item>
               <div className="form-buttons">
-                <Button type="primary" htmlType="Register" loading={this.state.loading}>
-                  Login
+                <Button type="primary" htmlType="submit" loading={this.state.loading}>
+                  Register
                 </Button>
                 <Button htmlType="button" onClick={this.onReset}>
                   Reset
@@ -92,7 +98,7 @@ class Register extends React.Component {
             </Form.Item>
             <Form.Item>
               <div style={{ textAlign: 'center', color: 'white' }}>
-                Already have an account? <a onClick={() => this.props.onSuccess()}>Login</a>
+                Already have an account? <a onClick={() => this.props.navigate('/')}>Login</a>
               </div>
             </Form.Item>
           </Form>
@@ -102,4 +108,4 @@ class Register extends React.Component {
   };
 }
 
-export default Register;
+export default withNavigation(Register);
