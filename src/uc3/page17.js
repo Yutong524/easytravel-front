@@ -28,7 +28,7 @@ const CreateNewRouteStep6 = ({ prevPlan, routeName, startDate, endDate, selected
     for (let i = 0; i < poiSchedules.length; i++) {
       const { date, startTime, endTime, openTime } = poiSchedules[i];
       const selectedDate = moment(date).format('dddd').toUpperCase();
-      const openingHours = openTime.find(time => time[selectedDate]);
+      const openingHours = openTime.find(day => day.day === selectedDate);
       if (!openingHours) {
         message.error(`POI is not open on ${selectedDate}.`);
         return false;
@@ -80,7 +80,7 @@ const CreateNewRouteStep6 = ({ prevPlan, routeName, startDate, endDate, selected
 
   const handleCreateClick = () => {
     if (validateSchedules()) {
-      onCreate(routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority, poiSchedules);
+      onCreate(routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority, poiSchedules, 'confirm');
     }
   };
 
@@ -133,7 +133,7 @@ const CreateNewRouteStep6 = ({ prevPlan, routeName, startDate, endDate, selected
       </DragDropContext>
       <div className="buttons">
         <Button onClick={onBack}>Back</Button>
-        <Button type="primary" onClick={handleCreateClick}>Create</Button>
+        <Button type="primary" onClick={handleCreateClick}>Next</Button>
         <Button onClick={onCancel}>Cancel</Button>
       </div>
       <Modal
@@ -154,5 +154,6 @@ const CreateNewRouteStep6 = ({ prevPlan, routeName, startDate, endDate, selected
 };
 
 export default CreateNewRouteStep6;
+
 
 

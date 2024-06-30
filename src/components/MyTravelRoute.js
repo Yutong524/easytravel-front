@@ -9,6 +9,7 @@ import CreateNewRouteStep3 from '../uc3/page12';
 import CreateNewRouteStep4 from '../uc3/page14';
 import CreateNewRouteStep5 from '../uc3/page16';
 import CreateNewRouteStep6 from '../uc3/page17';
+import CreateNewRouteStep7 from '../uc3/confirmation';
 
 const { Panel } = Collapse;
 
@@ -27,6 +28,7 @@ function MyTravelRoute({ userId }) {
   const [isOrdered, setIsOrdered] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [priority, setPriority] = useState('NA');
+  const [poiSchedules, setPoiSchedules] = useState([]);
 
   const handleCreateRouteClick = () => {
     setModalStep(1);
@@ -55,6 +57,9 @@ function MyTravelRoute({ userId }) {
     } else if (modalStep === 5) {
       setPriority(priority);
       setModalStep(6);
+    } else if (modalStep === 6) {
+        setPoiSchedules(schedules);
+        setModalStep(7);
     } else {
       console.log('Route Name:', routeName);
       console.log('Start Date:', startDate);
@@ -70,6 +75,27 @@ function MyTravelRoute({ userId }) {
 
   const handleBackStep = () => {
     setModalStep(modalStep - 1);
+  };
+
+  const handleCreateRoute = async () => {
+    try {
+      const newRoute = {
+        routeName,
+        startDate,
+        endDate,
+        selectedPlaces,
+        selectedPlan,
+        priority,
+        poiSchedules,
+        customerId
+      };
+      await axios.post('http://localhost:8080/api/travelRoutes/outside', newRoute);
+      message.success('Route created successfully');
+      setIsModalVisible(false);
+      fetchTravelRoutes();
+    } catch (error) {
+      message.error('Failed to create route');
+    }
   };
 
   const fetchTravelRoutes = () => {
@@ -223,7 +249,9 @@ function MyTravelRoute({ userId }) {
             ? "Select Plan"
             : modalStep === 5
             ? "Set Priority"
-            : "Schedule POIs"
+            : modalStep === 6
+            ? "Schedule POIs"
+            : "Confirmation"
         }
         visible={isModalVisible}
         onCancel={handleModalCancel}
@@ -273,7 +301,7 @@ function MyTravelRoute({ userId }) {
             onCancel={handleModalCancel}
             onNext={handleNextStep}
           />
-        ) : (
+        ) : modalStep === 6 ? (
           <CreateNewRouteStep6
             routeName={routeName}
             startDate={startDate}
@@ -286,6 +314,19 @@ function MyTravelRoute({ userId }) {
             onCancel={handleModalCancel}
             onCreate={handleNextStep}
           />
+        ) : (
+            <CreateNewRouteStep7 
+            routeName={routeName} 
+            startDate={startDate} 
+            endDate={endDate} 
+            selectedPlaces={selectedPlaces} 
+            isOrdered={isOrdered} 
+            selectedPlan={selectedPlan} 
+            priority={priority} 
+            poiSchedules={poiSchedules} 
+            onBack={handleBackStep} 
+            onCreate={handleCreateRoute} 
+            onCancel={handleModalCancel} />
         )}
       </Modal>
     </div>

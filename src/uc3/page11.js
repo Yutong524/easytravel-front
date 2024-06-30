@@ -6,7 +6,6 @@ import './page12.css';
 const { RangePicker } = DatePicker;
 
 const CreateNewRouteStep2 = ({ prevPlan, routeName, onBack, onCancel, onNext }) => {
-
   const [dates, setDates] = useState([]);
   const [error, setError] = useState('');
 
@@ -35,7 +34,9 @@ const CreateNewRouteStep2 = ({ prevPlan, routeName, onBack, onCancel, onNext }) 
     }
 
     setError('');
-    onNext(routeName, startDate, endDate);
+    const formattedStartDate = startDate.format('YYYY-MM-DD');
+    const formattedEndDate = endDate.format('YYYY-MM-DD');
+    onNext(routeName, formattedStartDate, formattedEndDate);
   };
 
   return (

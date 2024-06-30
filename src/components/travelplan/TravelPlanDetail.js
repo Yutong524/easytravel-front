@@ -10,11 +10,13 @@ import CreateNewRouteStep3 from '../../uc3/page12';
 import CreateNewRouteStep4 from '../../uc3/page14';
 import CreateNewRouteStep5 from '../../uc3/page16';
 import CreateNewRouteStep6 from '../../uc3/page17';
+import CreateNewRouteStep7 from '../../uc3/confirmation';
 
 const { Panel } = Collapse;
 const { Option } = Select;
 
 const TravelPlanDetails = ({ plan, setShowDetails }) => {
+  const customerId = localStorage.getItem("customer");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [routeName, setRouteName] = useState('');
@@ -26,6 +28,7 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
   const [routes, setRoutes] = useState([]);
   const [expandedRouteIds, setExpandedRouteIds] = useState([]);
   const [poiNames, setPoiNames] = useState({});
+  const [poiSchedules, setPoiSchedules] = useState([]);
 
   useEffect(() => {
     if (plan && plan.planId) {
@@ -84,6 +87,9 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
     } else if (modalStep === 5) {
       setPriority(priority);
       setModalStep(6);
+    } else if (modalStep === 6) {
+      setPoiSchedules(schedules);
+      setModalStep(7);
     } else {
       console.log('Route Name:', routeName);
       console.log('Start Date:', startDate);
@@ -99,6 +105,27 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
 
   const handleBackStep = () => {
     setModalStep(modalStep - 1);
+  };
+
+  const handleCreateRoute = async () => {
+    try {
+      const newRoute = {
+        routeName,
+        startDate,
+        endDate,
+        selectedPlaces,
+        plan,
+        priority,
+        poiSchedules,
+        customerId
+      };
+      await axios.post('http://localhost:8080/api/travelRoutes/inside', newRoute);
+      message.success('Route created successfully');
+      setIsModalVisible(false);
+      fetchRoutes(plan.planId);
+    } catch (error) {
+      message.error('Failed to create route');
+    }
   };
 
   const toggleView = () => {
@@ -129,7 +156,7 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
   const changePriority = async (routeId, newPriority) => {
     if (newPriority === "none") {
       try {
-        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/0`, { newPriority: newPriority });
+        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}`, { newPriority: newPriority });
         message.success(`Priority changed to ${newPriority}`);
         fetchRoutes(plan.planId);
       } catch (error) {
@@ -154,7 +181,7 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
       }
     } else {
       try {
-        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/0`, { newPriority: newPriority });
+        await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}`, { newPriority: newPriority });
         message.success(`Priority changed to ${newPriority}`);
         fetchRoutes(plan.planId);
       } catch (error) {
@@ -262,7 +289,9 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
             ? "Select Plan"
             : modalStep === 5
             ? "Set Priority"
-            : "Schedule POIs"
+            : modalStep === 6
+            ? "Schedule POIs"
+            : "Confirmation"
         }
         visible={isModalVisible}
         onCancel={handleModalCancel}
@@ -312,7 +341,7 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
             onCancel={handleModalCancel}
             onNext={handleNextStep}
           />
-        ) : (
+        ) : modalStep === 6 ? (
           <CreateNewRouteStep6
             routeName={routeName}
             startDate={startDate}
@@ -324,6 +353,20 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
             onBack={handleBackStep}
             onCancel={handleModalCancel}
             onCreate={handleNextStep}
+          />
+        ) : (
+          <CreateNewRouteStep7 
+            routeName={routeName} 
+            startDate={startDate} 
+            endDate={endDate} 
+            selectedPlaces={selectedPlaces} 
+            isOrdered={isOrdered} 
+            selectedPlan={plan} 
+            priority={priority} 
+            poiSchedules={poiSchedules} 
+            onBack={handleBackStep} 
+            onCreate={handleCreateRoute} 
+            onCancel={handleModalCancel} 
           />
         )}
       </Modal>

@@ -6,7 +6,7 @@ import './page12.css';
 const CreateNewRouteStep5 = ({ prevPlan, routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, onNext, onBack, onCancel }) => {
   const [priority, setPriority] = useState('NA');
   const [routesInPlan, setRoutesInPlan] = useState([]);
-  const customerId = localStorage.getItem("customer");
+  const [oldRouteId, setOldRouteId] = useState(0);
 
   useEffect(() => {
     if (selectedPlan) {
@@ -16,9 +16,9 @@ const CreateNewRouteStep5 = ({ prevPlan, routeName, startDate, endDate, selected
 
   const fetchRoutesInPlan = async () => {
     try {
-        const planId = selectedPlan.planId;
+      const planId = selectedPlan.planId;
       const response = await axios.get(`http://localhost:8080/api/travelRoutes/plans/${planId}`);
-      setRoutesInPlan(response.data.routes);
+      setRoutesInPlan(response.data);
     } catch (error) {
       console.error('Failed to fetch routes in plan:', error);
     }
@@ -31,25 +31,18 @@ const CreateNewRouteStep5 = ({ prevPlan, routeName, startDate, endDate, selected
       if (existingRoute) {
         const confirmReplace = window.confirm(`There is already a ${selectedPriority} priority route. Do you want to replace it?`);
         if (confirmReplace) {
-          replaceOldPriority(existingRoute.id, selectedPriority);
           setPriority(selectedPriority);
+          setOldRouteId(existingRoute.routeId);
         } else {
           setPriority('');
         }
       } else {
         setPriority(selectedPriority);
+        setOldRouteId(0);
       }
     } else {
       setPriority(selectedPriority);
-    }
-  };
-
-  const replaceOldPriority = async (oldRouteId, newPriority) => {
-    try {
-      await axios.patch(`http://localhost:8080/api/travelPlans/routes/${selectedPlan}/${oldRouteId}`, { priority: 'none' });
-      message.success(`Old ${newPriority} priority route has been replaced.`);
-    } catch (error) {
-      console.error(`Failed to replace old ${newPriority} priority route:`, error);
+      setOldRouteId(0);
     }
   };
 
@@ -58,7 +51,8 @@ const CreateNewRouteStep5 = ({ prevPlan, routeName, startDate, endDate, selected
       message.error('Priority selection is not allowed for routes without a plan.');
       return;
     }
-    onNext(routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority);
+
+    onNext(routeName, startDate, endDate, selectedPlaces, isOrdered, selectedPlan, priority, oldRouteId);
   };
 
   return (

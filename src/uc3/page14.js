@@ -7,7 +7,8 @@ const { Option } = Select;
 
 const CreateNewRouteStep4 = ({ prevPlan, routeName, startDate, endDate, selectedPlaces, isOrdered, onNext, onBack, onCancel }) => {
   const [plans, setPlans] = useState([]);
-  const [selectedPlan, setSelectedPlan] = useState(prevPlan ? prevPlan.id : null);
+  const [selectedPlan, setSelectedPlan] = useState(prevPlan || null);
+  const customerId = localStorage.getItem("customer");
 
   useEffect(() => {
     if (!prevPlan) {
@@ -17,7 +18,7 @@ const CreateNewRouteStep4 = ({ prevPlan, routeName, startDate, endDate, selected
 
   const fetchPlans = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/travelPlans/');
+      const response = await axios.get(`http://localhost:8080/api/travelPlans/${customerId}`);
       setPlans(response.data);
     } catch (error) {
       console.error('Failed to fetch travel plans:', error);
@@ -25,7 +26,8 @@ const CreateNewRouteStep4 = ({ prevPlan, routeName, startDate, endDate, selected
   };
 
   const handlePlanChange = (value) => {
-    setSelectedPlan(value === "no_plan" ? null : value);
+    const selected = plans.find(plan => plan.id === value);
+    setSelectedPlan(selected);
   };
 
   const handleNextClick = () => {
@@ -69,3 +71,4 @@ const CreateNewRouteStep4 = ({ prevPlan, routeName, startDate, endDate, selected
 };
 
 export default CreateNewRouteStep4;
+
