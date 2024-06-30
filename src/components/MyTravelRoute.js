@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { List, Card, Button, Collapse, Empty, message, Modal } from 'antd';
 import axios from 'axios';
-import './MyTravelRoute.css';
 import moment from 'moment';
+import './MyTravelRoute.css';
 import CreateNewRouteStep1 from '../uc3/page10';
 import CreateNewRouteStep2 from '../uc3/page11';
 import CreateNewRouteStep3 from '../uc3/page12';
@@ -10,6 +10,8 @@ import CreateNewRouteStep4 from '../uc3/page14';
 import CreateNewRouteStep5 from '../uc3/page16';
 import CreateNewRouteStep6 from '../uc3/page17';
 import CreateNewRouteStep7 from '../uc3/confirmation';
+import ViewOnMapPOI from './ViewOnMapPOI';
+import ViewOnMapRoute from './ViewOnMapRoute';
 
 const { Panel } = Collapse;
 
@@ -19,7 +21,9 @@ function MyTravelRoute({ userId }) {
   const [expandedRouteIds, setExpandedRouteIds] = useState([]);
   const [planNames, setPlanNames] = useState({});
   const [poiNames, setPoiNames] = useState({});
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isCreateRouteModalVisible, setIsCreateRouteModalVisible] = useState(false);
+  const [isViewMapModalVisible, setIsViewMapModalVisible] = useState(false);
+  const [isViewPOIModalVisible, setIsViewPOIModalVisible] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [routeName, setRouteName] = useState('');
   const [startDate, setStartDate] = useState(null);
@@ -29,90 +33,27 @@ function MyTravelRoute({ userId }) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [priority, setPriority] = useState('NA');
   const [poiSchedules, setPoiSchedules] = useState([]);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedPOI, setSelectedPOI] = useState(null);
 
-  const handleCreateRouteClick = () => {
-    setModalStep(1);
-    setIsModalVisible(true);
-  };
+  useEffect(() => {
+    fetchTravelRoutes();
+  }, [userId]);
 
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleNextStep = (name, start, end, places, ordered, plan, priority, schedules) => {
-    if (modalStep === 1) {
-      setRouteName(name);
-      setModalStep(2);
-    } else if (modalStep === 2) {
-      setStartDate(start);
-      setEndDate(end);
-      setModalStep(3);
-    } else if (modalStep === 3) {
-      setSelectedPlaces(places);
-      setIsOrdered(ordered);
-      setModalStep(4);
-    } else if (modalStep === 4) {
-      setSelectedPlan(plan);
-      setModalStep(5);
-    } else if (modalStep === 5) {
-      setPriority(priority);
-      setModalStep(6);
-    } else if (modalStep === 6) {
-        setPoiSchedules(schedules);
-        setModalStep(7);
-    } else {
-      console.log('Route Name:', routeName);
-      console.log('Start Date:', startDate);
-      console.log('End Date:', endDate);
-      console.log('Selected Places:', selectedPlaces);
-      console.log('Ordered:', isOrdered);
-      console.log('Selected Plan:', selectedPlan);
-      console.log('Priority:', priority);
-      console.log('Schedules:', schedules);
-      setIsModalVisible(false);
-    }
-  };
-
-  const handleBackStep = () => {
-    setModalStep(modalStep - 1);
-  };
-
-  const handleCreateRoute = async () => {
+  const fetchTravelRoutes = async () => {
     try {
-      const newRoute = {
-        routeName,
-        startDate,
-        endDate,
-        selectedPlaces,
-        selectedPlan,
-        priority,
-        poiSchedules,
-        customerId
-      };
-      await axios.post('http://localhost:8080/api/travelRoutes/outside', newRoute);
-      message.success('Route created successfully');
-      setIsModalVisible(false);
-      fetchTravelRoutes();
-    } catch (error) {
-      message.error('Failed to create route');
-    }
-  };
-
-  const fetchTravelRoutes = () => {
-    axios.get(`http://localhost:8080/api/travelRoutes/routes/${customerId}`)
-      .then(response => {
-        setTravelRoutes(response.data);
-        response.data.forEach(route => {
-          fetchPlanName(route.planId);
-          route.poiArrangement && route.poiArrangement.forEach(poi => {
-            fetchPoiName(poi.poiId);
-          });
+      const response = await axios.get(`http://localhost:8080/api/travelRoutes/routes/${customerId}`);
+      setTravelRoutes(response.data);
+      response.data.forEach(route => {
+        fetchPlanName(route.planId);
+        route.poiArrangement && route.poiArrangement.forEach(poi => {
+          fetchPoiName(poi.poiId);
         });
-      })
-      .catch(error => {
-        message.error('Failed to fetch travel routes.');
-        console.error(error);
       });
+    } catch (error) {
+      message.error('Failed to fetch travel routes.');
+      console.error(error);
+    }
   };
 
   const fetchPlanName = async (planId) => {
@@ -139,6 +80,82 @@ function MyTravelRoute({ userId }) {
     }
   };
 
+  const handleCreateRouteClick = () => {
+    setModalStep(1);
+    setIsCreateRouteModalVisible(true);
+  };
+
+  const handleCreateRouteModalCancel = () => {
+    setIsCreateRouteModalVisible(false);
+  };
+
+  const handleViewMapModalCancel = () => {
+    setIsViewMapModalVisible(false);
+  };
+
+  const handleViewPOIModalCancel = () => {
+    setIsViewPOIModalVisible(false);
+  };
+
+  const handleNextStep = (name, start, end, places, ordered, plan, priority, schedules) => {
+    if (modalStep === 1) {
+      setRouteName(name);
+      setModalStep(2);
+    } else if (modalStep === 2) {
+      setStartDate(start);
+      setEndDate(end);
+      setModalStep(3);
+    } else if (modalStep === 3) {
+      setSelectedPlaces(places);
+      setIsOrdered(ordered);
+      setModalStep(4);
+    } else if (modalStep === 4) {
+      setSelectedPlan(plan);
+      setModalStep(5);
+    } else if (modalStep === 5) {
+      setPriority(priority);
+      setModalStep(6);
+    } else if (modalStep === 6) {
+      setPoiSchedules(schedules);
+      setModalStep(7);
+    } else {
+      console.log('Route Name:', routeName);
+      console.log('Start Date:', startDate);
+      console.log('End Date:', endDate);
+      console.log('Selected Places:', selectedPlaces);
+      console.log('Ordered:', isOrdered);
+      console.log('Selected Plan:', selectedPlan);
+      console.log('Priority:', priority);
+      console.log('Schedules:', schedules);
+      setIsCreateRouteModalVisible(false);
+    }
+  };
+
+  const handleBackStep = () => {
+    setModalStep(modalStep - 1);
+  };
+
+  const handleCreateRoute = async () => {
+    try {
+      const newRoute = {
+        routeName,
+        startDate,
+        endDate,
+        selectedPlaces,
+        selectedPlan,
+        priority,
+        poiSchedules,
+        customerId
+      };
+      await axios.post('http://localhost:8080/api/travelRoutes/outside', newRoute);
+      message.success('Route created successfully');
+      setIsCreateRouteModalVisible(false);
+      fetchTravelRoutes();
+    } catch (error) {
+      message.error('Failed to create route');
+    }
+  };
+
   const toggleVisibility = async (routeId, currentVisibility) => {
     try {
       await axios.patch(`http://localhost:8080/api/travelRoutes/routes/${routeId}/visibility`, {
@@ -150,10 +167,6 @@ function MyTravelRoute({ userId }) {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    fetchTravelRoutes();
-  }, [userId]);
 
   const toggleExpand = (routeId) => {
     setExpandedRouteIds((prevExpandedRouteIds) => {
@@ -185,6 +198,16 @@ function MyTravelRoute({ userId }) {
     ));
   };
 
+  const viewRouteOnMap = (route) => {
+    setSelectedRoute(route);
+    setIsViewMapModalVisible(true);
+  };
+
+  const viewPOIOnMap = (poi) => {
+    setSelectedPOI(poi);
+    setIsViewPOIModalVisible(true);
+  };
+
   const renderItem = (route) => (
     <List.Item className="route-item">
       <Card bordered={true} style={{ width: '100%' }}>
@@ -204,6 +227,13 @@ function MyTravelRoute({ userId }) {
               style={{ marginLeft: '10px' }}
             >
               {route.visibility ? 'Set Private' : 'Set Public'}
+            </Button>
+            <Button
+              type="default"
+              onClick={() => viewRouteOnMap(route)}
+              style={{ marginLeft: '10px' }}
+            >
+              View on Map
             </Button>
           </div>
         </div>
@@ -237,6 +267,18 @@ function MyTravelRoute({ userId }) {
         )}
       </div>
 
+      <ViewOnMapRoute
+        route={selectedRoute}
+        isVisible={isViewMapModalVisible}
+        onCancel={handleViewMapModalCancel}
+      />
+
+      <ViewOnMapPOI
+        poi={selectedPOI}
+        isVisible={isViewPOIModalVisible}
+        onCancel={handleViewPOIModalCancel}
+      />
+
       <Modal
         title={
           modalStep === 1
@@ -253,17 +295,17 @@ function MyTravelRoute({ userId }) {
             ? "Schedule POIs"
             : "Confirmation"
         }
-        visible={isModalVisible}
-        onCancel={handleModalCancel}
+        visible={isCreateRouteModalVisible}
+        onCancel={handleCreateRouteModalCancel}
         footer={null}
       >
         {modalStep === 1 ? (
-          <CreateNewRouteStep1 onNext={handleNextStep} onCancel={handleModalCancel} />
+          <CreateNewRouteStep1 onNext={handleNextStep} onCancel={handleCreateRouteModalCancel} />
         ) : modalStep === 2 ? (
           <CreateNewRouteStep2
             routeName={routeName}
             onBack={handleBackStep}
-            onCancel={handleModalCancel}
+            onCancel={handleCreateRouteModalCancel}
             onNext={handleNextStep}
           />
         ) : modalStep === 3 ? (
@@ -274,11 +316,11 @@ function MyTravelRoute({ userId }) {
             selectedPlaces={selectedPlaces}
             setSelectedPlaces={setSelectedPlaces}
             onBack={handleBackStep}
-            onCancel={handleModalCancel}
+            onCancel={handleCreateRouteModalCancel}
             onNext={handleNextStep}
           />
         ) : modalStep === 4 ? (
-          <CreateNewRouteStep4 
+          <CreateNewRouteStep4
             prevPlan={""}
             routeName={routeName}
             startDate={startDate}
@@ -286,7 +328,7 @@ function MyTravelRoute({ userId }) {
             selectedPlaces={selectedPlaces}
             isOrdered={isOrdered}
             onBack={handleBackStep}
-            onCancel={handleModalCancel}
+            onCancel={handleCreateRouteModalCancel}
             onNext={handleNextStep}
           />
         ) : modalStep === 5 ? (
@@ -298,7 +340,7 @@ function MyTravelRoute({ userId }) {
             isOrdered={isOrdered}
             selectedPlan={selectedPlan}
             onBack={handleBackStep}
-            onCancel={handleModalCancel}
+            onCancel={handleCreateRouteModalCancel}
             onNext={handleNextStep}
           />
         ) : modalStep === 6 ? (
@@ -311,7 +353,7 @@ function MyTravelRoute({ userId }) {
             selectedPlan={selectedPlan}
             priority={priority}
             onBack={handleBackStep}
-            onCancel={handleModalCancel}
+            onCancel={handleCreateRouteModalCancel}
             onCreate={handleNextStep}
           />
         ) : (
@@ -326,7 +368,7 @@ function MyTravelRoute({ userId }) {
             poiSchedules={poiSchedules} 
             onBack={handleBackStep} 
             onCreate={handleCreateRoute} 
-            onCancel={handleModalCancel} />
+            onCancel={handleCreateRouteModalCancel} />
         )}
       </Modal>
     </div>

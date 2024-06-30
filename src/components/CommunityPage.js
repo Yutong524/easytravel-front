@@ -4,6 +4,8 @@ import axios from 'axios';
 import './CommunityPage.css';
 import moment from 'moment';
 import { SearchOutlined } from '@ant-design/icons';
+import ViewOnMapPOI from './ViewOnMapPOI';
+import ViewOnMapRoute from './ViewOnMapRoute';
 
 const { Option } = Select;
 const { Panel } = Collapse;
@@ -20,6 +22,10 @@ function CommunityPage() {
     const [poiNames, setPoiNames] = useState({});
     const [planNames, setPlanNames] = useState({});
     const [showFavorites, setShowFavorites] = useState(false);
+    const [selectedRoute, setSelectedRoute] = useState(null);
+    const [selectedPOI, setSelectedPOI] = useState(null);
+    const [isViewMapModalVisible, setIsViewMapModalVisible] = useState(false);
+    const [isViewPOIModalVisible, setIsViewPOIModalVisible] = useState(false);
 
     useEffect(() => {
         fetchPois();
@@ -146,13 +152,30 @@ function CommunityPage() {
             });
     };
 
+    const viewRouteOnMap = (route) => {
+        setSelectedRoute(route);
+        setIsViewMapModalVisible(true);
+    };
+
+    const viewPOIOnMap = (poi) => {
+        setSelectedPOI(poi);
+        setIsViewPOIModalVisible(true);
+    };
+
     const renderPOIDetails = (poiArrangement) => {
         if (!Array.isArray(poiArrangement)) {
             return <p>No POI arrangements available.</p>;
         }
         return poiArrangement.map((poi, index) => (
             <div key={index} className="poi-detail">
-                <p><strong>{poiNames[poi.poiId] || 'Loading...'}</strong></p>
+                <p>
+                    <strong
+                        style={{ cursor: 'pointer', color: '#1890ff' }}
+                        onClick={() => viewPOIOnMap(poi)}
+                    >
+                        {poiNames[poi.poiId] || 'Loading...'}
+                    </strong>
+                </p>
                 <p className="indented">From: {moment(poi.startTime).format('YYYY-MM-DD HH:mm:ss')}</p>
                 <p className="indented">To: {moment(poi.endTime).format('YYYY-MM-DD HH:mm:ss')}</p>
             </div>
@@ -178,6 +201,13 @@ function CommunityPage() {
                             style={{ marginLeft: '10px' }}
                         >
                             {favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? 'Remove from Favorites' : 'Add to Favorites'}
+                        </Button>
+                        <Button
+                            type="default"
+                            onClick={() => viewRouteOnMap(route)}
+                            style={{ marginLeft: '10px' }}
+                        >
+                            View on Map
                         </Button>
                     </div>
                 </div>
@@ -265,12 +295,20 @@ function CommunityPage() {
                     )
                 )}
             </div>
+
+            <ViewOnMapRoute
+                route={selectedRoute}
+                isVisible={isViewMapModalVisible}
+                onCancel={() => setIsViewMapModalVisible(false)}
+            />
+
+            <ViewOnMapPOI
+                poi={selectedPOI}
+                isVisible={isViewPOIModalVisible}
+                onCancel={() => setIsViewPOIModalVisible(false)}
+            />
         </div>
     );
 }
 
 export default CommunityPage;
-
-
-
-

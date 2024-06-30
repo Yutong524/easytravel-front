@@ -11,6 +11,8 @@ import CreateNewRouteStep4 from '../../uc3/page14';
 import CreateNewRouteStep5 from '../../uc3/page16';
 import CreateNewRouteStep6 from '../../uc3/page17';
 import CreateNewRouteStep7 from '../../uc3/confirmation';
+import ViewOnMapPOI from '../ViewOnMapPOI';
+import ViewOnMapRoute from '../ViewOnMapRoute';
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -29,6 +31,10 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
   const [expandedRouteIds, setExpandedRouteIds] = useState([]);
   const [poiNames, setPoiNames] = useState({});
   const [poiSchedules, setPoiSchedules] = useState([]);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedPOI, setSelectedPOI] = useState(null);
+  const [isViewMapModalVisible, setIsViewMapModalVisible] = useState(false);
+  const [isViewPOIModalVisible, setIsViewPOIModalVisible] = useState(false);
 
   useEffect(() => {
     if (plan && plan.planId) {
@@ -68,6 +74,14 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleViewMapModalCancel = () => {
+    setIsViewMapModalVisible(false);
+  };
+
+  const handleViewPOIModalCancel = () => {
+    setIsViewPOIModalVisible(false);
   };
 
   const handleNextStep = (name, start, end, places, ordered, plan, priority, schedules) => {
@@ -191,13 +205,30 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
     }
   };
 
+  const viewRouteOnMap = (route) => {
+    setSelectedRoute(route);
+    setIsViewMapModalVisible(true);
+  };
+
+  const viewPOIOnMap = (poi) => {
+    setSelectedPOI(poi);
+    setIsViewPOIModalVisible(true);
+  };
+
   const renderPOIDetails = (poiArrangement) => {
     if (!Array.isArray(poiArrangement)) {
       return <p>No POI arrangements available.</p>;
     }
     return poiArrangement.map((poi, index) => (
       <div key={index} className="poi-detail">
-        <p><strong>{poiNames[poi.poiId] || 'Loading...'}</strong></p>
+        <p>
+          <strong
+            style={{ cursor: 'pointer', color: '#1890ff' }}
+            onClick={() => viewPOIOnMap(poi)}
+          >
+            {poiNames[poi.poiId] || 'Loading...'}
+          </strong>
+        </p>
         <p className="indented">From: {moment(poi.startTime).format('YYYY-MM-DD HH:mm:ss')}</p>
         <p className="indented">To: {moment(poi.endTime).format('YYYY-MM-DD HH:mm:ss')}</p>
       </div>
@@ -228,6 +259,13 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
               <Option value="first">First</Option>
               <Option value="second">Second</Option>
             </Select>
+            <Button
+              type="default"
+              onClick={() => viewRouteOnMap(route)}
+              style={{ marginLeft: '10px' }}
+            >
+              View on Map
+            </Button>
           </div>
         </div>
         {expandedRouteIds.includes(route.routeId) && (
@@ -370,6 +408,18 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
           />
         )}
       </Modal>
+
+      <ViewOnMapRoute
+        route={selectedRoute}
+        isVisible={isViewMapModalVisible}
+        onCancel={handleViewMapModalCancel}
+      />
+
+      <ViewOnMapPOI
+        poi={selectedPOI}
+        isVisible={isViewPOIModalVisible}
+        onCancel={handleViewPOIModalCancel}
+      />
     </div>
   );
 };
