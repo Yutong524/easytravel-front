@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { List, Card, Button, Collapse, Empty, message, Modal } from 'antd';
+import { List, Card, Button, Collapse, Empty, message, Modal, Tooltip } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
+import { DeleteOutlined } from '@ant-design/icons';
 import './MyTravelRoute.css';
 import CreateNewRouteStep1 from '../uc3/page10';
 import CreateNewRouteStep2 from '../uc3/page11';
@@ -168,6 +169,17 @@ function MyTravelRoute({ userId }) {
     }
   };
 
+  const handleDeleteRoute = async (routeId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/travelRoutes/routes/${routeId}`);
+      message.success('Route deleted successfully');
+      fetchTravelRoutes();
+    } catch (error) {
+      message.error('Failed to delete route');
+      console.error(error);
+    }
+  };
+
   const toggleExpand = (routeId) => {
     setExpandedRouteIds((prevExpandedRouteIds) => {
       if (prevExpandedRouteIds.includes(routeId)) {
@@ -235,6 +247,14 @@ function MyTravelRoute({ userId }) {
             >
               View on Map
             </Button>
+            <Tooltip title="Delete">
+              <Button
+                className="custom-delete-button"
+                onClick={() => handleDeleteRoute(route.routeId)}
+                icon={<DeleteOutlined />}
+                style={{ marginLeft: '10px' }}
+              />
+            </Tooltip>
           </div>
         </div>
         {expandedRouteIds.includes(route.id) && (
