@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { DatePicker, message } from 'antd';
+import { DatePicker, Button, Typography } from 'antd';
 import moment from 'moment';
 import './page12.css';
 
 const { RangePicker } = DatePicker;
+const { Title, Paragraph } = Typography;
 
 const CreateNewRouteStep2 = ({ prevPlan, routeName, onBack, onCancel, onNext }) => {
   const [dates, setDates] = useState([]);
@@ -41,17 +42,18 @@ const CreateNewRouteStep2 = ({ prevPlan, routeName, onBack, onCancel, onNext }) 
 
   return (
     <div className="create-new-route-step">
-      <h2>Create New Route</h2>
-      <p>Select days for your travel (1~15 days)</p>
+      <Title level={2}>Create New Route</Title>
+      <Paragraph>Select days for your travel (1~15 days)</Paragraph>
       <RangePicker
         disabledDate={disabledDate}
         onChange={handleDateChange}
+        className="range-picker"
       />
       {error && <p className="error-message">{error}</p>}
       <div className="buttons">
-        <button onClick={onBack}>Back</button>
-        <button onClick={handleNextClick}>Next</button>
-        <button onClick={onCancel}>Cancel</button>
+        <Button onClick={onBack}>Back</Button>
+        <Button type="primary" onClick={handleNextClick}>Next</Button>
+        <Button onClick={onCancel}>Cancel</Button>
       </div>
     </div>
   );

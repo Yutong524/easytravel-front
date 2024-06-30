@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { Button, Input, Typography } from 'antd';
 import './page12.css';
+
+const { Title, Paragraph } = Typography;
 
 const CreateNewRouteStep1 = ({ prevPlan, onNext, onCancel }) => {
   const [routeName, setRouteName] = useState('');
@@ -15,8 +18,9 @@ const CreateNewRouteStep1 = ({ prevPlan, onNext, onCancel }) => {
 
   return (
     <div className="create-new-route-step">
-      <h2>Create New Route</h2>
-      <input
+      <Title level={2}>Create New Route</Title>
+      <Paragraph>Add a name for your travel route:</Paragraph>
+      <Input
         type="text"
         placeholder="Provide a name for your travel route"
         value={routeName}
@@ -27,8 +31,8 @@ const CreateNewRouteStep1 = ({ prevPlan, onNext, onCancel }) => {
       />
       {error && <p className="error-message">Please provide a name for your travel route.</p>}
       <div className="buttons">
-        <button onClick={onCancel}>Cancel</button>
-        <button onClick={handleNextClick}>Next</button>
+        <Button onClick={onCancel}>Cancel</Button>
+        <Button type="primary" onClick={handleNextClick}>Next</Button>
       </div>
     </div>
   );
