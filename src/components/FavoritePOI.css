@@ -41,3 +41,15 @@
   .poi-list .ant-card .ant-card-body .ant-btn-default {
     margin-top: 10px;
   }
+
+  .custom-delete-button {
+    border: 1px solid red;
+    color: red;
+    background-color: white;
+    border-radius: 4px;
+  }
+  
+  .custom-delete-button:hover {
+    background-color: red;
+    color: white;
+  }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { List, Card, Tag, Button, message, Empty, Modal, Tabs, Rate, Divider } from 'antd';
+import { List, Card, Tag, Button, message, Empty, Modal, Tabs, Rate, Divider, Tooltip } from 'antd';
 import axios from 'axios';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import useGoogleMaps from './useMap';
 import moment from 'moment';
+import { DeleteOutlined } from '@ant-design/icons';
 import './FavoritePOI.css';
 
 const googleMapApiKey = 'AIzaSyCteXk5Mm93MMoKpeBgKMlwr_JnnnsUgcY';
@@ -74,6 +75,17 @@ const MyFavoritePOI = ({ userId }) => {
     setIsModalVisible(false);
   };
 
+  const toggleFavoritePOI = async (poiId) => {
+    try {
+      await axios.patch(`http://localhost:8080/api/pois/favorite/${customerId}/${poiId}`);
+      message.success('Favorite status toggled successfully');
+      fetchFavoritePOIs();
+    } catch (error) {
+      message.error('Failed to toggle favorite status');
+      console.error(error);
+    }
+  };
+
   const renderItem = (poi) => (
     <List.Item className="poi-item">
       <Card bordered={true} style={{ width: '100%' }}>
@@ -85,6 +97,14 @@ const MyFavoritePOI = ({ userId }) => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Button type="default" onClick={() => viewOnMap(poi)}>View On Map</Button>
+            <Tooltip title="Delete">
+              <Button
+                className="custom-delete-button"
+                onClick={() => toggleFavoritePOI(poi.poiId)}
+                icon={<DeleteOutlined />}
+                style={{ marginTop: '10px' }}
+              />
+            </Tooltip>
           </div>
         </div>
       </Card>
