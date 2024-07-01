@@ -4,7 +4,7 @@ import axios from 'axios';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import useGoogleMaps from './useMap';
 import moment from 'moment';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import './FavoritePOI.css';
 
 const googleMapApiKey = 'AIzaSyCteXk5Mm93MMoKpeBgKMlwr_JnnnsUgcY';
@@ -96,7 +96,9 @@ const MyFavoritePOI = ({ userId }) => {
             {poi.category ? <CategoryTag category={poi.category} /> : <CategoryTag />}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Button type="default" onClick={() => viewOnMap(poi)}>View On Map</Button>
+            <Tooltip title="View On Map">
+              <Button type="default" onClick={() => viewOnMap(poi)} icon={<EnvironmentOutlined />}></Button>
+            </Tooltip>
             <Tooltip title="Delete">
               <Button
                 className="custom-delete-button"

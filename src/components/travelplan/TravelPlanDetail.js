@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, Card, Button, Collapse, Empty, message, Modal, Tooltip, Select } from 'antd';
-import { LeftOutlined, DeleteOutlined } from '@ant-design/icons';
+import { LeftOutlined, DeleteOutlined, EyeOutlined, EyeInvisibleOutlined, EnvironmentOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import './TravelPlanDetail.css';
 import moment from 'moment';
 import CreateNewRouteStep1 from '../../uc3/page10';
@@ -244,11 +244,20 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
             <p>Duration: {moment(route.startDate).format('YYYY-MM-DD')} to {moment(route.endDate).format('YYYY-MM-DD')}</p>
           </div>
           <div>
-            <Button type="default" onClick={() => toggleExpand(route.routeId)}>
-              {expandedRouteIds.includes(route.routeId) ? 'Collapse' : 'Expand'}
-            </Button>
+            <Tooltip title={expandedRouteIds.includes(route.routeId) ? "Collapse" : "Expand"}>
+              <Button type="default" onClick={() => toggleExpand(route.routeId)} icon={expandedRouteIds.includes(route.routeId) ? <UpOutlined /> : <DownOutlined />} />
+            </Tooltip>
             <Tooltip title="delete">
               <Button danger icon={<DeleteOutlined />} onClick={() => deleteRoute(route.routeId)} style={{ marginLeft: '10px' }} />
+            </Tooltip>
+            <Tooltip title="View on Map">
+            <Button
+              type="default"
+              onClick={() => viewRouteOnMap(route)}
+              style={{ marginLeft: '10px' }}
+              icon={<EnvironmentOutlined />}
+            >
+            </Button>
             </Tooltip>
             <Select
               defaultValue={route.priority || "none"}
@@ -259,13 +268,6 @@ const TravelPlanDetails = ({ plan, setShowDetails }) => {
               <Option value="first">First</Option>
               <Option value="second">Second</Option>
             </Select>
-            <Button
-              type="default"
-              onClick={() => viewRouteOnMap(route)}
-              style={{ marginLeft: '10px' }}
-            >
-              View on Map
-            </Button>
           </div>
         </div>
         {expandedRouteIds.includes(route.routeId) && (

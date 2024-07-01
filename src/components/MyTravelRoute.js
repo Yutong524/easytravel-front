@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Card, Button, Collapse, Empty, message, Modal, Tooltip } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
-import { DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined, EyeInvisibleOutlined, DeleteOutlined, EnvironmentOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import './MyTravelRoute.css';
 import CreateNewRouteStep1 from '../uc3/page10';
 import CreateNewRouteStep2 from '../uc3/page11';
@@ -220,33 +220,48 @@ function MyTravelRoute({ userId }) {
     setIsViewPOIModalVisible(true);
   };
 
-  const renderItem = (route) => (
+  const renderPriority = (priority) => {
+  if (priority === 'first') {
+    return <span style={{ fontWeight: 'bold', color: 'red' }}>{'\u00A0'.repeat(2)}(FIRST PRIORITY)</span>;
+  } else if (priority === 'second') {
+    return <span style={{ fontWeight: 'bold', color: 'orange' }}>{'\u00A0'.repeat(2)}(SECOND PRIORITY)</span>;
+  } else {
+    return <span></span>;
+  }
+};
+
+const renderItem = (route) => (
     <List.Item className="route-item">
       <Card bordered={true} style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
-            <h4>{route.name}</h4>
+            <div style={{ display: 'flex' }}>
+              <h4>{route.name}</h4>
+              <span>{renderPriority(route.priority)}</span>
+            </div>
             <p>{planNames[route.planId] || 'Loading...'}</p>
             <p>Duration: {calculateDuration(route.startDate, route.endDate)}</p>
           </div>
-          <div>
-            <Button type="default" onClick={() => toggleExpand(route.id)}>
-              {expandedRouteIds.includes(route.id) ? 'Collapse' : 'Expand'}
-            </Button>
-            <Button
-              type="default"
-              onClick={() => toggleVisibility(route.routeId, route.visibility)}
-              style={{ marginLeft: '10px' }}
-            >
-              {route.visibility ? 'Set Private' : 'Set Public'}
-            </Button>
-            <Button
-              type="default"
-              onClick={() => viewRouteOnMap(route)}
-              style={{ marginLeft: '10px' }}
-            >
-              View on Map
-            </Button>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Tooltip title={expandedRouteIds.includes(route.id) ? "Collapse" : "Expand"}>
+              <Button type="default" onClick={() => toggleExpand(route.id)} icon={expandedRouteIds.includes(route.id) ? <UpOutlined /> : <DownOutlined />} />
+            </Tooltip>
+            <Tooltip title={route.visibility ? "Set Private" : "Set Public"}>
+              <Button
+                type="default"
+                onClick={() => toggleVisibility(route.routeId, route.visibility)}
+                style={{ marginLeft: '10px' }}
+                icon={route.visibility ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+              />
+            </Tooltip>
+            <Tooltip title="View on Map">
+              <Button
+                type="default"
+                onClick={() => viewRouteOnMap(route)}
+                style={{ marginLeft: '10px' }}
+                icon={<EnvironmentOutlined />}
+              />
+            </Tooltip>
             <Tooltip title="Delete">
               <Button
                 className="custom-delete-button"

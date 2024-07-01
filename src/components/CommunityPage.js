@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { List, Card, Button, Collapse, Empty, message, Select } from 'antd';
+import { List, Card, Button, Collapse, Empty, message, Select, Tooltip } from 'antd';
 import axios from 'axios';
 import './CommunityPage.css';
 import moment from 'moment';
-import { SearchOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined, EnvironmentOutlined, HeartOutlined, HeartFilled, SearchOutlined } from '@ant-design/icons';
 import ViewOnMapPOI from './ViewOnMapPOI';
 import ViewOnMapRoute from './ViewOnMapRoute';
 
@@ -184,43 +184,49 @@ function CommunityPage() {
 
     const renderRouteItem = (route) => (
         <List.Item className="route-item">
-            <Card bordered={true} style={{ width: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div>
-                        <h4>{route.name}</h4>
-                        <p>{planNames[route.planId] || 'Loading...'}</p>
-                        <p>Duration: {calculateDuration(route.startDate, route.endDate)}</p>
-                    </div>
-                    <div>
-                        <Button type="default" onClick={() => toggleExpand(route.routeId)}>
-                            {expandedRouteIds.includes(route.routeId) ? 'Collapse' : 'Expand'}
-                        </Button>
-                        <Button 
-                            type={favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? 'danger' : 'primary'} 
-                            onClick={() => toggleFavorite(route.routeId)}
-                            style={{ marginLeft: '10px' }}
-                        >
-                            {favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? 'Remove from Favorites' : 'Add to Favorites'}
-                        </Button>
-                        <Button
-                            type="default"
-                            onClick={() => viewRouteOnMap(route)}
-                            style={{ marginLeft: '10px' }}
-                        >
-                            View on Map
-                        </Button>
-                    </div>
-                </div>
-                {expandedRouteIds.includes(route.routeId) && (
-                    <Collapse className="route-details" activeKey="1">
-                        <Panel header="Route Details" key="1">
-                            <div>{renderPOIDetails(route.poiArrangement)}</div>
-                        </Panel>
-                    </Collapse>
-                )}
-            </Card>
+          <Card bordered={true} style={{ width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <h4>{route.name}</h4>
+                <p>{planNames[route.planId] || 'Loading...'}</p>
+                <p>Duration: {calculateDuration(route.startDate, route.endDate)}</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Tooltip title={expandedRouteIds.includes(route.routeId) ? "Collapse" : "Expand"}>
+                  <Button
+                    type="default"
+                    onClick={() => toggleExpand(route.routeId)}
+                    icon={expandedRouteIds.includes(route.routeId) ? <UpOutlined /> : <DownOutlined />}
+                  />
+                </Tooltip>
+                <Tooltip title={favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? "Remove from Favorites" : "Add to Favorites"}>
+                  <Button
+                    type="default"
+                    onClick={() => toggleFavorite(route.routeId)}
+                    style={{ marginLeft: '10px' }}
+                    icon={favoriteRoutes.some(favRoute => favRoute.routeId === route.routeId) ? <HeartFilled style={{ color: 'red' }} /> : <HeartOutlined />}
+                  />
+                </Tooltip>
+                <Tooltip title="View on Map">
+                  <Button
+                    type="default"
+                    onClick={() => viewRouteOnMap(route)}
+                    style={{ marginLeft: '10px' }}
+                    icon={<EnvironmentOutlined />}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+            {expandedRouteIds.includes(route.routeId) && (
+              <Collapse className="route-details" activeKey="1">
+                <Panel header="Route Details" key="1">
+                  <div>{renderPOIDetails(route.poiArrangement)}</div>
+                </Panel>
+              </Collapse>
+            )}
+          </Card>
         </List.Item>
-    );
+      );
 
     const toggleShowFavorites = () => {
         setShowFavorites(!showFavorites);
